@@ -71,7 +71,7 @@ def callback():
         if not isinstance(event, MessageEvent):
             continue
         if isinstance(event.message, TextMessage):
-            print(gmaps.geoclode(event.message.text))
+            print(gmaps.geocode(event.message.text))
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=event.message.text)
