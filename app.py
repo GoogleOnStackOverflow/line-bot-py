@@ -32,7 +32,7 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, 
     LocationMessage, TemplateSendMessage, 
     CarouselTemplate, CarouselColumn,
-    PostbackTemplateAction,PostbackEvent
+    PostbackTemplateAction,PostbackEvent,
     LocationSendMessage
 )
 
