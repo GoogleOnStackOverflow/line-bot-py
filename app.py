@@ -90,7 +90,7 @@ def geo_temp_parser(result):
 
 def geo_loc_parser(result):
     return LocationSendMessage(
-        title='Location Below',
+        title='Search Result',
         address=result['formatted_address'],
         latitude=result['geometry']['location']['lat'],
         longitude=result['geometry']['location']['lng']
