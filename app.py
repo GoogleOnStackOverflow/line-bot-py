@@ -77,7 +77,7 @@ def geo_temp_parser(result):
                 PostbackTemplateAction(
                     label = 'Yes',
                     text = 'YES',
-                    data = 'action=yes&location=' + str(lat) + ' , ' + str(lng)
+                    data = '{\'lat\':' + str(lat) + ' , \'lng\'' + str(lng)'}'
                 )
             ]
         )
@@ -109,40 +109,39 @@ def callback():
     # if event is MessageEvent and message is TextMessage, then echo text
     for event in events:
         if isinstance(event , PostbackEvent):
-            print event.postback
+            print event.postback['data']
 
-        elif not isinstance(event, MessageEvent):
-            continue
-        if isinstance(event.message, TextMessage):
-            print event.source.sender_id
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text='Searching ' + event.message.text + ' ...')
-            )
-
-            results = gmaps.geocode(event.message.text)
-            if not len(results) == 0:
-                line_bot_api.push_message(
-                    event.source.sender_id,
-                    geo_loc_parser(results[0])
-                )
-                
-                line_bot_api.push_message(
-                    event.source.sender_id,
-                    geo_temp_parser(results[0])
-                )
-            else:
-                line_bot_api.push_message(
-                    event.source.sender_id,
-                    TextSendMessage(text='Sorry, we can\'t find the place.\nPlease try other words, thanks.' )
+        elif isinstance(event, MessageEvent):
+            if isinstance(event.message, TextMessage):
+                print event.source.sender_id
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text='Searching ' + event.message.text + ' ...')
                 )
 
-        elif isinstance(event.message, LocationMessage):
-            rtext = event.message.address + "\n" + str(event.message.latitude) + ":" + str(event.message.longitude)
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=rtext)
-            )
+                results = gmaps.geocode(event.message.text)
+                if not len(results) == 0:
+                    line_bot_api.push_message(
+                        event.source.sender_id,
+                        geo_loc_parser(results[0])
+                    )
+                    
+                    line_bot_api.push_message(
+                        event.source.sender_id,
+                        geo_temp_parser(results[0])
+                    )
+                else:
+                    line_bot_api.push_message(
+                        event.source.sender_id,
+                        TextSendMessage(text='Sorry, we can\'t find the place.\nPlease try other words, thanks.' )
+                    )
+
+            elif isinstance(event.message, LocationMessage):
+                rtext = event.message.address + "\n" + str(event.message.latitude) + ":" + str(event.message.longitude)
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=rtext)
+                )
 
     return 'OK'
 
