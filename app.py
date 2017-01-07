@@ -25,11 +25,15 @@ from linebot import (
 from linebot.exceptions import (
     InvalidSignatureError
 )
+
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
+    MessageEvent, TextMessage, TextSendMessage, 
+    LocationMessage, TemplateSendMessage, 
+    CarouselTemplate, CarouselColumn
 )
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'this_should_be_configured')
 
 # get channel_secret and channel_access_token from your environment variable
 channel_secret = '209874aceff053b9a2d2858dc201930c'
@@ -63,13 +67,17 @@ def callback():
     for event in events:
         if not isinstance(event, MessageEvent):
             continue
-        if not isinstance(event.message, TextMessage):
-            continue
-
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=event.message.text)
-        )
+        if isinstance(event.message, TextMessage):
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=event.message.text)
+            )
+        else if isinstance(event.message, LocationMessage):
+            rtext = str(event.message.address) + "\n" + str(event.message.latitude) + ":" + str(event.message.longitude)
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=rtext)
+            )
 
     return 'OK'
 
