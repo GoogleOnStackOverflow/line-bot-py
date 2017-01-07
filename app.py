@@ -72,7 +72,7 @@ def geo_arr_parser(array):
             CarouselColumn(
                 thumbnail_image_url = map_img(addr, lat, lng),
                 title = 'Is this what you mean?',
-                text = str(addr) + '\n' + str(lat) + ' , ' + str(lng),
+                text = str(lat) + ' , ' + str(lng),
                 actions = [
                     PostbackTemplateAction(
                         label = 'Yes',
@@ -108,6 +108,7 @@ def callback():
         if not isinstance(event, MessageEvent):
             continue
         if isinstance(event.message, TextMessage):
+            print event.source.userId
             line_bot_api.reply_message(
                 event.reply_token,
                 geo_arr_parser(gmaps.geocode(event.message.text))
