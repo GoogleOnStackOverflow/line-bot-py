@@ -31,8 +31,8 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, 
     LocationMessage, TemplateSendMessage, 
-    CarouselTemplate, CarouselColumn,
-    PostbackTemplateAction,PostbackEvent,
+    ButtonsTemplate,
+    PostbackTemplateAction, PostbackEvent,
     LocationSendMessage
 )
 
@@ -63,13 +63,13 @@ def map_img(addr, lat, lng):
     return (google_api_host + addr_t + pic_format + marker + key)
 
 def geo_temp_parser(result):
-    columns_t = []
-    
     lat = result['geometry']['location']['lat']
     lng = result['geometry']['location']['lng']
     addr = result['formatted_address']
-    columns_t.append(
-        CarouselColumn(
+
+    return TemplateSendMessage(
+        alt_text='Carousel template',
+        template=ButtonsTemplate(
             thumbnail_image_url = map_img(addr, lat, lng),
             title = 'Is this what you mean?',
             text = str(lat) + ' , ' + str(lng),
@@ -81,11 +81,6 @@ def geo_temp_parser(result):
                 )
             ]
         )
-    )
-
-    return TemplateSendMessage(
-        alt_text='Carousel template',
-        template=CarouselTemplate(columns=columns_t)
     )
 
 def geo_loc_parser(result):
