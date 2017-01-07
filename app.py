@@ -77,7 +77,7 @@ def geo_temp_parser(result):
                 PostbackTemplateAction(
                     label = 'Yes',
                     text = 'YES',
-                    data = '{\'lat\':' + str(lat) + ' , \'lng\'' + str(lng)'}'
+                    data = '{\'lat\':' + str(lat) + ' , \'lng\'' + str(lng) + '}'
                 )
             ]
         )
