@@ -67,7 +67,7 @@ def geo_arr_parser(array):
         lat = result['geometry']['location']['lat']
         lng = result['geometry']['location']['lng']
         addr = result['formatted_address']
-        columns.append(
+        columns_t.append(
             CarouselColumn(
                 thumbnail_image_url=map_img(addr, lat, lng),
                 title=str(addr),
