@@ -76,7 +76,6 @@ def geo_temp_parser(result):
             actions = [
                 PostbackTemplateAction(
                     label = 'Yes',
-                    text = 'YES',
                     data = '{\'lat\':' + str(lat) + ' , \'lng\'' + str(lng) + '}'
                 )
             ]
@@ -109,7 +108,7 @@ def callback():
     # if event is MessageEvent and message is TextMessage, then echo text
     for event in events:
         if isinstance(event , PostbackEvent):
-            print event.postback['data']
+            print event.postback.Postback
 
         elif isinstance(event, MessageEvent):
             if isinstance(event.message, TextMessage):
