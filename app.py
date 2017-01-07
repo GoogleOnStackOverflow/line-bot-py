@@ -32,7 +32,8 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, 
     LocationMessage, TemplateSendMessage, 
     CarouselTemplate, CarouselColumn,
-    PostbackTemplateAction
+    PostbackTemplateAction,
+    LocationSendMessage
 )
 
 gmaps = googlemaps.Client(key='AIzaSyCgrAXdRBBTzDGjVfyALtpxBuocTZ_6XZ4')
@@ -61,31 +62,38 @@ def map_img(addr, lat, lng):
     key = '&key=AIzaSyAC1c5MnGfa8VvNjQ9QTJxm7Qvg5wWBOvE'
     return (google_api_host + addr_t + pic_format + marker + key)
 
-def geo_arr_parser(array):
+def geo_temp_parser(result):
     columns_t = []
-    for result in array:
-        
-        lat = result['geometry']['location']['lat']
-        lng = result['geometry']['location']['lng']
-        addr = result['formatted_address']
-        columns_t.append(
-            CarouselColumn(
-                thumbnail_image_url = map_img(addr, lat, lng),
-                title = 'Is this what you mean?',
-                text = str(lat) + ' , ' + str(lng),
-                actions = [
-                    PostbackTemplateAction(
-                        label = 'Yes',
-                        text = 'YES',
-                        data = 'action=yes&location=' + str(addr)
-                    )
-                ]
-            )
+    
+    lat = result['geometry']['location']['lat']
+    lng = result['geometry']['location']['lng']
+    addr = result['formatted_address']
+    columns_t.append(
+        CarouselColumn(
+            thumbnail_image_url = map_img(addr, lat, lng),
+            title = 'Is this what you mean?',
+            text = str(lat) + ' , ' + str(lng),
+            actions = [
+                PostbackTemplateAction(
+                    label = 'Yes',
+                    text = 'YES',
+                    data = 'action=yes&location=' + str(addr)
+                )
+            ]
         )
+    )
 
     return TemplateSendMessage(
         alt_text='Carousel template',
         template=CarouselTemplate(columns=columns_t)
+    )
+
+def geo_loc_parser(result):
+    return LocationSendMessage(
+        title='Location Below',
+        address=result['formatted_address'],
+        latitude=result['geometry']['location']['lat'],
+        longitude=result['geometry']['location']['lng']
     )
 
 
@@ -108,11 +116,29 @@ def callback():
         if not isinstance(event, MessageEvent):
             continue
         if isinstance(event.message, TextMessage):
-            print event
+            print event['source']['userId']
             line_bot_api.reply_message(
                 event.reply_token,
-                geo_arr_parser(gmaps.geocode(event.message.text))
+                TextSendMessage(text='Searching ' + str(event.message.text) + ' ...')
             )
+
+            results = gmaps.geocode(event.message.text)
+            if not len(results) == 0:
+                line_bot_api.push_message(
+                    event['source']['userId'],
+                    geo_loc_parser(results[0])
+                )
+                
+                line_bot_api.push_message(
+                    event['source']['userId'],
+                    geo_temp_parser(results[0])
+                )
+            else:
+                line_bot_api.push_message(
+                    event['source']['userId'],
+                    TextSendMessage(text='Sorry, we can\'t find the place.\nPlease try other words, thanks.' )
+                )
+
         elif isinstance(event.message, LocationMessage):
             rtext = str(event.message.address) + "\n" + str(event.message.latitude) + ":" + str(event.message.longitude)
             line_bot_api.reply_message(
