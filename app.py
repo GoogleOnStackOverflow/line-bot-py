@@ -83,6 +83,7 @@ def geo_arr_parser(array):
         )
         """
         print result
+    return TextSendMessage(text='Got it')
     return TemplateSendMessage(
         alt_text='Carousel template',
         template=CarouselTemplate(columns=columns_t)
