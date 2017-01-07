@@ -108,7 +108,7 @@ def callback():
     # if event is MessageEvent and message is TextMessage, then echo text
     for event in events:
         if isinstance(event , PostbackEvent):
-            print event.postback.Postback
+            print event.postback.data
 
         elif isinstance(event, MessageEvent):
             if isinstance(event.message, TextMessage):
