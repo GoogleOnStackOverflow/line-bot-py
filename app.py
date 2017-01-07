@@ -90,6 +90,11 @@ def geo_loc_parser(result):
         longitude=result['geometry']['location']['lng']
     )
 
+def loc_data_parser(lat, lng):
+    return TextSendMessage(
+        text='Retrieving datas around\n'+ lat + ' , ' + lng
+    )
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -109,6 +114,13 @@ def callback():
     for event in events:
         if isinstance(event , PostbackEvent):
             print event.postback.data
+            lat = event.postback.data.split(',')[0]
+            lng = event.postback.data.split(',')[1]
+
+            line_bot_api.reply_message(
+                event.reply_token,
+                loc_data_parser(lat,lng)
+            )
 
         elif isinstance(event, MessageEvent):
             if isinstance(event.message, TextMessage):
@@ -136,10 +148,11 @@ def callback():
                     )
 
             elif isinstance(event.message, LocationMessage):
-                rtext = event.message.address + "\n" + str(event.message.latitude) + ":" + str(event.message.longitude)
+                lat = event.message.latitude
+                lng = event.message.longitude
                 line_bot_api.reply_message(
                     event.reply_token,
-                    TextSendMessage(text=rtext)
+                    loc_data_parser(lat, lng)
                 )
 
     return 'OK'
