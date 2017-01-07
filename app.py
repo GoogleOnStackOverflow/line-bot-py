@@ -63,6 +63,7 @@ def map_img(addr, lat, lng):
 def geo_arr_parser(array):
     columns_t = []
     for result in array:
+        """
         lat = result.geometry.location.lat
         lng = result.geometry.location.lng
         addr = result.formatted_address
@@ -80,7 +81,8 @@ def geo_arr_parser(array):
                 ]
             )
         )
-    
+        """
+        print result
     return TemplateSendMessage(
         alt_text='Carousel template',
         template=CarouselTemplate(columns=columns_t)
