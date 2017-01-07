@@ -70,14 +70,14 @@ def geo_arr_parser(array):
         addr = result['formatted_address']
         columns_t.append(
             CarouselColumn(
-                thumbnail_image_url=map_img(addr, lat, lng),
-                title=str(addr),
-                text=str(lat)+' , '+str(lng),
-                actions=[
+                thumbnail_image_url = map_img(addr, lat, lng),
+                title = 'Is this what you mean?',
+                text = str(addr) + '\n' + str(lat) + ' , ' + str(lng),
+                actions = [
                     PostbackTemplateAction(
-                        label='Yes',
-                        text='YES',
-                        data='action=yes&location='+str(addr)
+                        label = 'Yes',
+                        text = 'YES',
+                        data = 'action=yes&location=' + str(addr)
                     )
                 ]
             )
