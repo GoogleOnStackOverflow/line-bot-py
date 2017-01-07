@@ -92,7 +92,7 @@ def geo_loc_parser(result):
 
 def loc_data_parser(lat, lng):
     return TextSendMessage(
-        text='Retrieving data around\n( '+ lat + ' , ' + lng + ' )'
+        text='Retrieving data around\n'+ str(lat) + ' , ' + str(lng)
     )
 
 
