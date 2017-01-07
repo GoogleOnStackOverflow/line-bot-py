@@ -113,7 +113,10 @@ def callback():
 
     # if event is MessageEvent and message is TextMessage, then echo text
     for event in events:
-        if not isinstance(event, MessageEvent):
+        if isinstance(event , PostbackEvent):
+            print event.postback
+
+        elif not isinstance(event, MessageEvent):
             continue
         if isinstance(event.message, TextMessage):
             print event.source.sender_id
