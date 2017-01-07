@@ -52,6 +52,41 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
 
+def map_img(addr, lat, lng):
+    addr_t = addr.replace(' ', '+')
+    marker = '&markers=color:blue%7C'+str(lat)+','+str(lng)
+    google_api_host = 'https://maps.googleapis.com/maps/api/staticmap?center='
+    pic_format = '&zoom=16&size=453x300&maptype=roadmap'
+    key = '&key=AIzaSyAC1c5MnGfa8VvNjQ9QTJxm7Qvg5wWBOvE'
+    return (google_api_host + addr_t + pic_format + marker + key)
+
+def geo_arr_parser(array):
+    columns_t = []
+    for result in array:
+        lat = result.geometry.location.lat
+        lng = result.geometry.location.lng
+        addr = result.formatted_address
+        columns.append(
+            CarouselColumn(
+                thumbnail_image_url=map_img(addr, lat, lng),
+                title=str(addr),
+                text=str(lat)+' , '+str(lng),
+                actions=[
+                    PostbackTemplateAction(
+                        label='Yes',
+                        text='YES',
+                        data='action=yes&location='+str(addr)
+                    )
+                ]
+            )
+        )
+    
+    return TemplateSendMessage(
+        alt_text='Carousel template',
+        template=CarouselTemplate(columns=columns_t)
+    )
+
+
 @app.route("/callback", methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
@@ -71,10 +106,9 @@ def callback():
         if not isinstance(event, MessageEvent):
             continue
         if isinstance(event.message, TextMessage):
-            print(gmaps.geocode(event.message.text))
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text=event.message.text)
+                geo_arr_parser(gmaps.geocode(event.message.text))
             )
         elif isinstance(event.message, LocationMessage):
             rtext = str(event.message.address) + "\n" + str(event.message.latitude) + ":" + str(event.message.longitude)
