@@ -77,7 +77,7 @@ def geo_temp_parser(result):
                 PostbackTemplateAction(
                     label = 'Yes',
                     text = 'YES',
-                    data = 'action=yes&location=' + str(addr)
+                    data = 'action=yes&location=' + str(lat) + ' , ' + str(lng)
                 )
             ]
         )
@@ -140,7 +140,7 @@ def callback():
                 )
 
         elif isinstance(event.message, LocationMessage):
-            rtext = str(event.message.address) + "\n" + str(event.message.latitude) + ":" + str(event.message.longitude)
+            rtext = event.message.address + "\n" + str(event.message.latitude) + ":" + str(event.message.longitude)
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=rtext)
