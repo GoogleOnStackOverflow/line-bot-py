@@ -63,10 +63,10 @@ def map_img(addr, lat, lng):
 def geo_arr_parser(array):
     columns_t = []
     for result in array:
-        """
-        lat = result.geometry.location.lat
-        lng = result.geometry.location.lng
-        addr = result.formatted_address
+        
+        lat = result['geometry']['location']['lat']
+        lng = result['geometry']['location']['lng']
+        addr = result['formatted_address']
         columns.append(
             CarouselColumn(
                 thumbnail_image_url=map_img(addr, lat, lng),
@@ -81,9 +81,7 @@ def geo_arr_parser(array):
                 ]
             )
         )
-        """
-        print result['geometry']
-    return TextSendMessage(text='Got it')
+
     return TemplateSendMessage(
         alt_text='Carousel template',
         template=CarouselTemplate(columns=columns_t)
