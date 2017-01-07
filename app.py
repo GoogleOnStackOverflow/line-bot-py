@@ -31,7 +31,8 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, 
     LocationMessage, TemplateSendMessage, 
-    CarouselTemplate, CarouselColumn
+    CarouselTemplate, CarouselColumn,
+    PostbackTemplateAction
 )
 
 gmaps = googlemaps.Client(key='AIzaSyCgrAXdRBBTzDGjVfyALtpxBuocTZ_6XZ4')
