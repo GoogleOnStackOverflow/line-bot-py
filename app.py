@@ -116,7 +116,7 @@ def callback():
         if not isinstance(event, MessageEvent):
             continue
         if isinstance(event.message, TextMessage):
-            print event.source.userId
+            print event.source.sender_id
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text='Searching ' + event.message.text + ' ...')
@@ -125,17 +125,17 @@ def callback():
             results = gmaps.geocode(event.message.text)
             if not len(results) == 0:
                 line_bot_api.push_message(
-                    event.source['userId'],
+                    event.source.sender_id,
                     geo_loc_parser(results[0])
                 )
                 
                 line_bot_api.push_message(
-                    event.source['userId'],
+                    event.source.sender_id,
                     geo_temp_parser(results[0])
                 )
             else:
                 line_bot_api.push_message(
-                    event.source['userId'],
+                    event.source.sender_id,
                     TextSendMessage(text='Sorry, we can\'t find the place.\nPlease try other words, thanks.' )
                 )
 
