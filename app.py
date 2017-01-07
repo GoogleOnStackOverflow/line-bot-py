@@ -108,7 +108,7 @@ def callback():
         if not isinstance(event, MessageEvent):
             continue
         if isinstance(event.message, TextMessage):
-            print event.source.userId
+            print event
             line_bot_api.reply_message(
                 event.reply_token,
                 geo_arr_parser(gmaps.geocode(event.message.text))
