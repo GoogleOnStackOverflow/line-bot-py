@@ -72,7 +72,7 @@ def callback():
                 event.reply_token,
                 TextSendMessage(text=event.message.text)
             )
-        else if isinstance(event.message, LocationMessage):
+        elif isinstance(event.message, LocationMessage):
             rtext = str(event.message.address) + "\n" + str(event.message.latitude) + ":" + str(event.message.longitude)
             line_bot_api.reply_message(
                 event.reply_token,
