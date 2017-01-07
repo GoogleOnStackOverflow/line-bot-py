@@ -82,7 +82,7 @@ def geo_arr_parser(array):
             )
         )
         """
-        print result
+        print result['geometry']
     return TextSendMessage(text='Got it')
     return TemplateSendMessage(
         alt_text='Carousel template',
