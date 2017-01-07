@@ -11,11 +11,13 @@
 #  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #  License for the specific language governing permissions and limitations
 #  under the License.
-
+# Google API Key: AIzaSyCgrAXdRBBTzDGjVfyALtpxBuocTZ_6XZ4
 from __future__ import unicode_literals
 
 import os
 import sys
+import googlemaps
+
 from argparse import ArgumentParser
 
 from flask import Flask, request, abort
@@ -32,6 +34,8 @@ from linebot.models import (
     CarouselTemplate, CarouselColumn
 )
 
+gmaps = googlemaps.Client(key='AIzaSyCgrAXdRBBTzDGjVfyALtpxBuocTZ_6XZ4')
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'this_should_be_configured')
 
@@ -47,7 +51,6 @@ if channel_access_token is None:
 
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
-
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -68,6 +71,7 @@ def callback():
         if not isinstance(event, MessageEvent):
             continue
         if isinstance(event.message, TextMessage):
+            print(gmaps.geoclode(event.message.text))
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=event.message.text)
