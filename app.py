@@ -68,15 +68,13 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
 
-def text_m_analyzer(words):
-    t = ''
-    for word, flag in words:
-        t += (word + ' :: ' + flag + '\n')
-    return t
-
 not_geo_term = ['天氣','空氣','品質','月','日','年','週','很糟','概況',
     '情形','情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷',
     '熱','冰','涼','雨','雪','霜','霧','霧霾','霾','霾害']
+
+em_flag = ['d','p','pa','pbei','c','cc','u','e','y','o','h','k','x','w','qt',
+    'qv','r','rr','rz','rzt','rzv','ryt','ryv','rg','t','tg','v','vd','vn','vshi',
+    'vyou','vf','vx','vi','vl','vg']
 
 def is_n_keywords(text):
     return (
@@ -87,7 +85,7 @@ def is_n_keywords(text):
 def try_match_geo_name(words):
     t = ''
     for word, flag in words:
-        if flag in ['n','ns','a','nsf','n','nz','nt','nl','m','mq']:
+        if flag not in em_flag:
             if not is_n_keywords(word):
                 t += word + ' '
     return t
@@ -162,7 +160,6 @@ def callback():
             if isinstance(event.message, TextMessage):
                 words = pseg.cut(event.message.text)
                 location_n = try_match_geo_name(words)
-                print(text_m_analyzer(words))
 
                 if location_n != '':
                     line_bot_api.reply_message(
