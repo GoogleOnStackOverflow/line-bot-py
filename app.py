@@ -68,7 +68,8 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
 not_geo_term = ['天氣','空氣','品質','月','日','年','週','很糟','概況',
-    '情形','情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷','熱','冰','涼']
+    '情形','情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷',
+    '熱','冰','涼','雨','雪','霜','霧','霧霾','霾','霾害']
 
 def is_n_keywords(text):
     return (
@@ -155,6 +156,9 @@ def callback():
             if isinstance(event.message, TextMessage):
                 words = pseg.cut(event.message.text)
                 location_n = try_match_geo_name(words)
+
+                for word, flag in words:
+                    print word + ' : ' + flag
 
                 if location_n != '':
                     line_bot_api.reply_message(
