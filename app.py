@@ -93,12 +93,11 @@ def try_match_geo_name(words):
     return t
 
 def map_img(addr, lat, lng):
-    addr_t = addr.replace(' ', '+')
     marker = '&markers=color:blue%7C'+str(lat)+','+str(lng)
-    google_api_host = 'https://maps.googleapis.com/maps/api/staticmap?center='
-    pic_format = '&zoom=16&size=453x300&maptype=roadmap'
+    google_api_host = 'https://maps.googleapis.com/maps/api/staticmap?'
+    pic_format = 'zoom=16&size=453x300&maptype=roadmap'
     key = '&key=AIzaSyAC1c5MnGfa8VvNjQ9QTJxm7Qvg5wWBOvE'
-    return (google_api_host + addr_t + pic_format + marker + key)
+    return (google_api_host + pic_format + marker + key)
 
 def geo_temp_parser(result):
     lat = result['geometry']['location']['lat']
