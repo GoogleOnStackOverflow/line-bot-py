@@ -72,7 +72,7 @@ def text_m_analyzer(words):
     t = ''
     for word, flag in words:
         t += (word + ' :: ' + flag + '\n')
-    return TextSendMessage(text=t)
+    return t
 
 not_geo_term = ['天氣','空氣','品質','月','日','年','週','很糟','概況',
     '情形','情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷',
@@ -163,17 +163,12 @@ def callback():
             if isinstance(event.message, TextMessage):
                 words = pseg.cut(event.message.text)
                 location_n = try_match_geo_name(words)
+                print(text_m_analyzer(words))
 
                 if location_n != '':
                     line_bot_api.reply_message(
                         event.reply_token,
                         TextSendMessage(text='正在搜尋\'' + location_n + '\'...')
-                    )
-
-
-                    line_bot_api.push_message(
-                        event.source.sender_id,
-                        text_m_analyzer(words)
                     )
 
                     results = gmaps.geocode(location_n)
@@ -204,12 +199,6 @@ def callback():
                 line_bot_api.reply_message(
                     event.reply_token,
                     loc_data_parser(lat, lng)
-                )
-
-
-                line_bot_api.push_message(
-                    event.source.sender_id,
-                    text_m_analyzer(words)
                 )
 
     return 'OK'
