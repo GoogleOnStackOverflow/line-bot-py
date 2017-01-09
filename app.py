@@ -93,6 +93,23 @@ def try_match_geo_name(words):
                 t += word + ' '
     return t
 
+# Codes for parsing feature type
+ask_term = ['問','知道','想','請問','詢問','嗎','有','沒','沒有','?','？']
+weather_term = ['天氣','空氣','品質','月','日','年','週','很糟','概況',
+    '情形','情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷',
+    '熱','冰','涼','雨','雪','霜','霧','霧霾','霾','霾害']
+reminder_term = ['如果','要是','話','告訴','提醒','通知']
+cancel_term = ['不要','取消']
+def feature(words):
+    for word, flag in words:
+        if (word in ask_term) and (word not in reminder_term) or (word in weather_term):
+            return 'ask'
+        elif word in reminder_term:
+            return 'reminder'
+        elif word in cancel_term
+            return 'cancel'
+    return 'unknown'
+
 def map_img(addr, lat, lng):
     marker = '&markers=color:blue%7C'+str(lat)+','+str(lng)
     google_api_host = 'https://maps.googleapis.com/maps/api/staticmap?'
@@ -133,7 +150,6 @@ def loc_data_parser(lat, lng):
         text='正在取得\n'+ str(lat) + ' , ' + str(lng) + '\n附近的資料...'
     )
 
-
 @app.route('/callback', methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
@@ -163,6 +179,11 @@ def callback():
             if isinstance(event.message, TextMessage):
                 words = pseg.cut(event.message.text)
                 location_n = try_match_geo_name(words)
+
+                line_bot_api.push_message(
+                    event.source.sender_id,
+                    TextSendMessage(text=feature(words))
+                )
 
                 if location_n != '':
                     line_bot_api.reply_message(
