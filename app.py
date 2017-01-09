@@ -106,7 +106,7 @@ def feature(words):
             return 'ask'
         elif word in reminder_term:
             return 'reminder'
-        elif word in cancel_term
+        elif word in cancel_term:
             return 'cancel'
     return 'unknown'
 
