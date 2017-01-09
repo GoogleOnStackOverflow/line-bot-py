@@ -155,27 +155,33 @@ def callback():
             if isinstance(event.message, TextMessage):
                 words = pseg.cut(event.message.text)
                 location_n = try_match_geo_name(words)
-                if 
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text='正在搜尋\'' + location_n + '\'...')
-                )
 
-                results = gmaps.geocode(location_n)
-                if not len(results) == 0:
-                    line_bot_api.push_message(
-                        event.source.sender_id,
-                        geo_loc_parser(results[0])
+                if location_n != '':
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text='正在搜尋\'' + location_n + '\'...')
                     )
-                    
-                    line_bot_api.push_message(
-                        event.source.sender_id,
-                        geo_temp_parser(results[0])
-                    )
+
+                    results = gmaps.geocode(location_n)
+                    if not len(results) == 0:
+                        line_bot_api.push_message(
+                            event.source.sender_id,
+                            geo_loc_parser(results[0])
+                        )
+                        
+                        line_bot_api.push_message(
+                            event.source.sender_id,
+                            geo_temp_parser(results[0])
+                        )
+                    else:
+                        line_bot_api.push_message(
+                            event.source.sender_id,
+                            TextSendMessage(text='抱歉，無法找到該地點\n您可以試著用別的詞搜尋' )
+                        )
                 else:
-                    line_bot_api.push_message(
-                        event.source.sender_id,
-                        TextSendMessage(text='抱歉，無法找到該地點\n你可以試著用別的詞搜尋' )
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text='很抱歉無法辨識您的意思')
                     )
 
             elif isinstance(event.message, LocationMessage):
