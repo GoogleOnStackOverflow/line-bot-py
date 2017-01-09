@@ -158,7 +158,7 @@ def callback():
                 location_n = try_match_geo_name(words)
 
                 for word, flag in words:
-                    print word + ' : ' + flag
+                    print (word + ' : ' + flag)
 
                 if location_n != '':
                     line_bot_api.reply_message(
