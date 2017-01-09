@@ -75,7 +75,7 @@ def try_match_geo_name(words):
     t = ''
     for word, flag in words:
         if flag in ['n','ns','a','nsf','n','nz','nt','nl','m','mq']:
-            if not is_n_keywords word:
+            if not is_n_keywords(word):
                 t += word + ' '
     return t
 
