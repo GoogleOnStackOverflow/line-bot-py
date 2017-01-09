@@ -156,9 +156,7 @@ def callback():
             if isinstance(event.message, TextMessage):
                 words = pseg.cut(event.message.text)
                 location_n = try_match_geo_name(words)
-
-                for word, flag in words:
-                    print (word + ' : ' + flag)
+                print(words)
 
                 if location_n != '':
                     line_bot_api.reply_message(
