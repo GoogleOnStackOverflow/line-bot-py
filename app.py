@@ -68,14 +68,14 @@ def geo_temp_parser(result):
     addr = result['formatted_address']
 
     return TemplateSendMessage(
-        alt_text='Carousel template',
+        alt_text='地點確認：請使用手機版以取得最佳體驗',
         template=ButtonsTemplate(
             thumbnail_image_url = map_img(addr, lat, lng),
-            title = 'Is this what you mean?',
+            title = '這是你要找的地方嗎？',
             text = str(lat) + ' , ' + str(lng),
             actions = [
                 PostbackTemplateAction(
-                    label = 'Yes',
+                    label = '是',
                     data = str(lat) + ',' + str(lng)
                 )
             ]
@@ -84,7 +84,7 @@ def geo_temp_parser(result):
 
 def geo_loc_parser(result):
     return LocationSendMessage(
-        title='Search Result',
+        title='搜尋結果',
         address=result['formatted_address'],
         latitude=result['geometry']['location']['lat'],
         longitude=result['geometry']['location']['lng']
@@ -92,7 +92,7 @@ def geo_loc_parser(result):
 
 def loc_data_parser(lat, lng):
     return TextSendMessage(
-        text='Retrieving data around\n'+ str(lat) + ' , ' + str(lng)
+        text='正在取得\n'+ str(lat) + ' , ' + str(lng) + '\n附近的資料...'
     )
 
 
@@ -127,7 +127,7 @@ def callback():
                 print event.source.sender_id
                 line_bot_api.reply_message(
                     event.reply_token,
-                    TextSendMessage(text='Searching ' + event.message.text + ' ...')
+                    TextSendMessage(text='正在搜尋\"' + event.message.text + '\"...')
                 )
 
                 results = gmaps.geocode(event.message.text)
@@ -144,7 +144,7 @@ def callback():
                 else:
                     line_bot_api.push_message(
                         event.source.sender_id,
-                        TextSendMessage(text='Sorry, we can\'t find the place.\nPlease try other words, thanks.' )
+                        TextSendMessage(text='抱歉，無法找到該地點\n你可以試著用別的詞搜尋看看哦' )
                     )
 
             elif isinstance(event.message, LocationMessage):
