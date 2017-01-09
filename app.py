@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-#  Licensed under the Apache License, Version 2.0 (the "License"); you may
+#  Licensed under the Apache License, Version 2.0 (the 'License'); you may
 #  not use this file except in compliance with the License. You may obtain
 #  a copy of the License at
 #
 #       https://www.apache.org/licenses/LICENSE-2.0
 #
 #  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT
 #  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #  License for the specific language governing permissions and limitations
 #  under the License.
@@ -17,6 +17,8 @@ from __future__ import unicode_literals
 import os
 import sys
 import googlemaps
+import pyrebase
+import jieba.posseg as pseg
 
 from argparse import ArgumentParser
 
@@ -38,6 +40,17 @@ from linebot.models import (
 
 gmaps = googlemaps.Client(key='AIzaSyCgrAXdRBBTzDGjVfyALtpxBuocTZ_6XZ4')
 
+firebase_config = {
+  'apiKey': 'AIzaSyAbFqX4W-2GLUGfPsXPO5oP0cJQdbbqyaM',
+  'authDomain': 'line-bot-db.firebaseapp.com',
+  'databaseURL': 'https://line-bot-db.firebaseio.com',
+  'storageBucket': 'line-bot-db.appspot.com'
+# 'messagingSenderId': '383008521760'
+}
+
+firebase = pyrebase.initialize_app(firebase_config)
+db = firebase.database()
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'this_should_be_configured')
 
@@ -53,6 +66,13 @@ if channel_access_token is None:
 
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
+
+def text_m_analyzer(text):
+    words = pseg.cut(text)
+    t = ''
+    for word, flag in words:
+        t += (word + ' :: ' + flag + '\n')
+    return TextSendMessage(text=t)
 
 def map_img(addr, lat, lng):
     addr_t = addr.replace(' ', '+')
@@ -96,13 +116,13 @@ def loc_data_parser(lat, lng):
     )
 
 
-@app.route("/callback", methods=['POST'])
+@app.route('/callback', methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
 
     # get request body as text
     body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
+    app.logger.info('Request body: ' + body)
 
     # parse webhook body
     try:
@@ -127,7 +147,8 @@ def callback():
                 print event.source.sender_id
                 line_bot_api.reply_message(
                     event.reply_token,
-                    TextSendMessage(text='正在搜尋\"' + event.message.text + '\"...')
+                    #TextSendMessage(text='正在搜尋\'' + event.message.text + '\'...')
+                    text_m_analyzer(event.message.text)
                 )
 
                 results = gmaps.geocode(event.message.text)
@@ -158,7 +179,7 @@ def callback():
     return 'OK'
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     arg_parser = ArgumentParser(
         usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
     )

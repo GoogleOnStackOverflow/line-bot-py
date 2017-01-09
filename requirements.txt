@@ -3,3 +3,5 @@ flask
 gevent
 gunicorn
 googlemaps
+pyrebase
+jieba
