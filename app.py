@@ -67,9 +67,14 @@ if channel_access_token is None:
 
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
+not_geo_term = ['天氣','空氣','品質','月','日','年','週','很糟','概況',
+    '情形','情況','可能性','機率','降雨','溫度','濕度','濃度','程度']
 
 def is_n_keywords(text):
-    return text in ['天氣','空氣','品質','月','日','年','週','很糟']
+    return (
+        text in not_geo_term or
+        text.find('點') != -1
+    )
 
 def try_match_geo_name(words):
     t = ''
@@ -150,7 +155,7 @@ def callback():
             if isinstance(event.message, TextMessage):
                 words = pseg.cut(event.message.text)
                 location_n = try_match_geo_name(words)
-
+                if 
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextSendMessage(text='正在搜尋\'' + location_n + '\'...')
@@ -170,7 +175,7 @@ def callback():
                 else:
                     line_bot_api.push_message(
                         event.source.sender_id,
-                        TextSendMessage(text='抱歉，無法找到該地點\n你可以試著用別的詞搜尋看看哦' )
+                        TextSendMessage(text='抱歉，無法找到該地點\n你可以試著用別的詞搜尋' )
                     )
 
             elif isinstance(event.message, LocationMessage):
