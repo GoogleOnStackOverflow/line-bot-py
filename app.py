@@ -68,12 +68,16 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
 
-def text_m_analyzer(text):
-    words = pseg.cut(text)
+def is_n_keywords(text):
+    return text in ['天氣','空氣','品質','月','日','年','週','很糟']
+
+def try_match_geo_name(words):
     t = ''
     for word, flag in words:
-        t += (word + ' :: ' + flag + '\n')
-    return TextSendMessage(text=t)
+        if flag in ['n','ns','a','nsf','n','nz','nt','nl','m','mq']:
+            if not is_n_keywords word:
+                t += word + ' '
+    return t
 
 def map_img(addr, lat, lng):
     addr_t = addr.replace(' ', '+')
@@ -134,7 +138,6 @@ def callback():
     # if event is MessageEvent and message is TextMessage, then echo text
     for event in events:
         if isinstance(event , PostbackEvent):
-            print event.postback.data
             lat = event.postback.data.split(',')[0]
             lng = event.postback.data.split(',')[1]
 
@@ -145,14 +148,15 @@ def callback():
 
         elif isinstance(event, MessageEvent):
             if isinstance(event.message, TextMessage):
-                print event.source.sender_id
+                words = pseg.cut(event.message.text)
+                location_n = try_match_geo_name(words)
+
                 line_bot_api.reply_message(
                     event.reply_token,
-                    #TextSendMessage(text='正在搜尋\'' + event.message.text + '\'...')
-                    text_m_analyzer(event.message.text)
+                    TextSendMessage(text='正在搜尋\'' + location_n + '\'...')
                 )
 
-                results = gmaps.geocode(event.message.text)
+                results = gmaps.geocode(location_n)
                 if not len(results) == 0:
                     line_bot_api.push_message(
                         event.source.sender_id,
