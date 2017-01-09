@@ -101,16 +101,15 @@ weather_term = ['天氣','空氣','品質','月','日','年','週','很糟','概
 reminder_term = ['如果','要是','話','告訴','提醒','通知']
 cancel_term = ['不要','取消']
 def feature(words):
+    t = 'unknown'
     for word, flag in words:
         if word in ask_term:
-            return 'ask'
+            t = 'ask'
         elif word in reminder_term:
-            return 'reminder'
+            t = 'reminder'
         elif word in cancel_term:
-            return 'cancel'
-        else:
-            continue
-    return 'unknown'
+            t = 'cancel'
+    return t
 
 def map_img(addr, lat, lng):
     marker = '&markers=color:blue%7C'+str(lat)+','+str(lng)
