@@ -108,6 +108,8 @@ def feature(words):
             return 'reminder'
         elif word in cancel_term:
             return 'cancel'
+        else:
+            continue
     return 'unknown'
 
 def map_img(addr, lat, lng):
