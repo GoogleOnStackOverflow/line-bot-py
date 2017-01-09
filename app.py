@@ -18,7 +18,11 @@ import os
 import sys
 import googlemaps
 import pyrebase
+import jieba
 import jieba.posseg as pseg
+
+# initialize first for faster analytics
+jieba.initialize()
 
 from argparse import ArgumentParser
 
