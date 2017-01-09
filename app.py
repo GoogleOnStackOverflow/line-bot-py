@@ -102,9 +102,9 @@ reminder_term = ['如果','要是','話','告訴','提醒','通知']
 cancel_term = ['不要','取消']
 def feature(words):
     for word, flag in words:
-        if word in ask_term and word in weather_term:
+        if word in ask_term:
             return 'ask'
-        elif word in reminder_term and word in weather_term:
+        elif word in reminder_term:
             return 'reminder'
         elif word in cancel_term:
             return 'cancel'
