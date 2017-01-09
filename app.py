@@ -21,7 +21,7 @@ import pyrebase
 import jieba
 
 # initialize first for faster analytics
-jieba.initialize()
+# jieba.initialize()
 pseg = jieba.posseg
 
 from argparse import ArgumentParser
