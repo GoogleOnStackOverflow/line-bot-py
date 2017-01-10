@@ -214,7 +214,7 @@ def location_checking_flow(event, words):
     else:
         send_cannot_understand(event)
 
-def weather_data_send_flow(event, word):
+def weather_data_send_flow(event, words):
     location_n = try_match_geo_name(words)
     if location_n != '':
         reply_searching(event, location_n)
