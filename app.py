@@ -175,13 +175,28 @@ def loc_data_parser(lat, lng):
         text='正在取得\n'+ str(lat) + ' , ' + str(lng) + '\n附近的資料...'
     )
 
+def reply_searching(event, location_n):
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text='正在搜尋\'' + location_n + '\'...')
+    )
+
+def send_cannot_understand(event):
+    line_bot_api.push_message(
+        event.source.sender_id,
+        TextSendMessage(text='很抱歉無法辨識您的意思')
+    )
+
+def send_cannot_find_location(event):
+    line_bot_api.push_message(
+        event.source.sender_id,
+        TextSendMessage(text='抱歉，無法找到該地點\n您可以試著用別的詞搜尋' )
+    )
+
 def location_checking_flow(event, words):
     location_n = try_match_geo_name(words)
     if location_n != '':
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text='正在搜尋\'' + location_n + '\'...')
-        )
+        reply_searching(event, location_n)
 
         results = gmaps.geocode(location_n)
         if not len(results) == 0:
@@ -195,10 +210,30 @@ def location_checking_flow(event, words):
                 geo_temp_parser(results[0])
             )
         else:
+            send_cannot_find_location(event)
+    else:
+        send_cannot_understand(event)
+
+def weather_data_send_flow(event, word):
+    location_n = try_match_geo_name(words)
+    if location_n != '':
+        reply_searching(event, location_n)
+
+        results = gmaps.geocode(location_n)
+        if not len(results) == 0:
             line_bot_api.push_message(
                 event.source.sender_id,
-                TextSendMessage(text='抱歉，無法找到該地點\n您可以試著用別的詞搜尋' )
+                geo_loc_parser(results[0])
             )
+                        
+            line_bot_api.push_message(
+                event.source.sender_id,
+                loc_data_parser(results[0]['geometry']['location']['lat'],results[0]['geometry']['location']['lng'])
+            )
+        else:
+            send_cannot_find_location(event)
+    else:
+        send_cannot_understand(event)
 
 @app.route('/callback', methods=['POST'])
 def callback():
@@ -241,16 +276,10 @@ def callback():
 
                 if f in ['r :: a','r :: t','r :: h','r :: r']:
                     location_checking_flow(event,words)
-                elif f in ['r :: a','r :: t','r :: h','r :: r','r :: unknown']:
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text=f)
-                    )
+                elif f in ['a :: a','a :: t','a :: h','a :: r','a :: unknown']:
+                    weather_data_send_flow(event, words)
                 else:
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text='很抱歉無法辨識您的意思')
-                    )
+                    send_cannot_understand(event)
 
             elif isinstance(event.message, LocationMessage):
                 lat = event.message.latitude
