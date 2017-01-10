@@ -170,9 +170,17 @@ def geo_loc_parser(result):
         longitude=result['geometry']['location']['lng']
     )
 
-def loc_data_parser(lat, lng):
+def loc_data_parser(lat, lng, event='unknown'):
+    event_chinese_enum = {
+        'unknown':'天氣',
+        'a':'空氣品質',
+        't':'溫度',
+        'h':'濕度',
+        'r':'降雨機率'
+    }
+
     return TextSendMessage(
-        text='正在取得\n'+ str(lat) + ' , ' + str(lng) + '\n附近的資料...'
+        text='正在取得\n'+ str(lat) + ' , ' + str(lng) + '\n附近的%s資料...' % (event_chinese_enum(event))
     )
 
 def reply_searching(event, location_n):
