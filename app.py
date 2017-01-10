@@ -73,7 +73,7 @@ parser = WebhookParser(channel_secret)
 not_geo_term = ['天氣','空氣','品質','月','日','年','週','很糟','概況',
     '情形','情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷',
     '熱','冰','涼','雨','雪','霜','霧','霧霾','霾','霾害','好','附近',
-    '的','時候','差','壞','糟','話','乾','濕','乾燥','潮濕','高','低','多']
+    '的','時候','差','壞','糟','話','乾','濕','乾燥','潮濕','高','低','多','用法']
 
 em_flag = ['d','p','pa','pbei','c','cc','u','e','y','o','h','k','x','w','qt',
     'qv','r','rr','rz','rzt','rzv','ryt','ryv','rg','t','tg','v','vd','vn','vshi',
@@ -111,6 +111,8 @@ cancel_term = ['不要','取消']
 def feature(words):
     t = 'unknown'
     for word in words:
+        if word['word'] == '用法':
+            return 'usage'
         if word['word'] in cancel_term:
             return 'c'
         if word['word'] in reminder_term:
@@ -192,7 +194,7 @@ def reply_searching(event, location_n):
 def send_cannot_understand(event):
     line_bot_api.push_message(
         event.source.sender_id,
-        TextSendMessage(text='很抱歉無法辨識您的意思')
+        TextSendMessage(text='很抱歉無法辨識您的意思\n您可以問我某地的天氣資料，或是讓我在溫濕度高低、降雨機率高、空氣品質不好時提醒您\n詳細使用範例與方法請輸入「用法」')
     )
 
 def send_cannot_find_location(event):
@@ -281,8 +283,13 @@ def callback():
                     event.source.sender_id,
                     TextSendMessage(text=f)
                 )
-
-                if f in ['r :: a','r :: t','r :: h','r :: r']:
+                
+                if f == 'usage':
+                    line_bot_api.push_message(
+                    event.source.sender_id,
+                    TextSendMessage(text='用法：')
+                )
+                elif f in ['r :: a','r :: t','r :: h','r :: r']:
                     location_checking_flow(event,words)
                 elif f in ['a :: a','a :: t','a :: h','a :: r','a :: unknown']:
                     weather_data_send_flow(event, words)
