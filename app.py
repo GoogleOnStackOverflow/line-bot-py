@@ -239,8 +239,13 @@ def callback():
                     TextSendMessage(text=f)
                 )
 
-                if f == 'r':
+                if f in ['r :: a','r :: t','r :: h','r :: r']:
                     location_checking_flow(event,words)
+                elif f in ['r :: a','r :: t','r :: h','r :: r','r :: unknown']:
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text=f)
+                    )
                 else:
                     line_bot_api.reply_message(
                         event.reply_token,
