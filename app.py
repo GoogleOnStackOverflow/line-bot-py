@@ -88,7 +88,7 @@ def is_n_keywords(text):
 def gen_to_arr(words):
     t = []
     for word, flag in words:
-        t.push({'word':word, 'flag': flag})
+        t.append({'word':word, 'flag': flag})
     return t
 
 def try_match_geo_name(words):
