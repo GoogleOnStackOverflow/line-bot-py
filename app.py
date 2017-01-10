@@ -85,12 +85,18 @@ def is_n_keywords(text):
         text.find('很') != -1
     )
 
+def gen_to_arr(words):
+    t = []
+    for word, flag in words:
+        t.push({'word':word, 'flag': flag})
+    return t
+
 def try_match_geo_name(words):
     t = ''
-    for word, flag in words:
-        if flag not in em_flag:
-            if not is_n_keywords(word):
-                t += word + ' '
+    for word in words:
+        if word['flag'] not in em_flag:
+            if not is_n_keywords(word['word']):
+                t += word['word'] + ' '
     return t
 
 # Codes for parsing feature type
@@ -102,14 +108,12 @@ reminder_term = ['如果','要是','話','告訴','提醒','通知']
 cancel_term = ['不要','取消']
 def feature(words):
     t = 'unknown'
-    print len(words)
-    for word, flag in words:
-        print '!'
-        if word in ask_term:
+    for word in words:
+        if word['word'] in ask_term:
             t = 'ask'
-        elif word in reminder_term:
+        elif word['word'] in reminder_term:
             t = 'reminder'
-        elif word in cancel_term:
+        elif word['word'] in cancel_term:
             t = 'cancel'
     return t
 
@@ -181,6 +185,7 @@ def callback():
         elif isinstance(event, MessageEvent):
             if isinstance(event.message, TextMessage):
                 words = pseg.cut(event.message.text)
+                words = gen_to_arr(words)
                 location_n = try_match_geo_name(words)
                 f = feature(words)
                 print f
