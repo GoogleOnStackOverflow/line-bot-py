@@ -73,7 +73,7 @@ parser = WebhookParser(channel_secret)
 not_geo_term = ['天氣','空氣','品質','月','日','年','週','很糟','概況',
     '情形','情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷',
     '熱','冰','涼','雨','雪','霜','霧','霧霾','霾','霾害','好','附近',
-    '的','時候','差','壞','糟','話','乾','濕','乾燥','潮濕','高','低','多','用法']
+    '的','時候','差','壞','糟','話','乾','濕','乾燥','潮濕','高','低','多','用法','會']
 
 em_flag = ['d','p','pa','pbei','c','cc','u','e','y','o','h','k','x','w','qt',
     'qv','r','rr','rz','rzt','rzv','ryt','ryv','rg','t','tg','v','vd','vn','vshi',
@@ -125,7 +125,7 @@ def q_type(words):
     for word in words:
         if word['word'] in ['降雨','下雨','淋濕','雨','降水']:
             return 'r'
-        if word['word'] in ['溫度','熱','冷','涼','溫暖','暖','冰','凍','度','幾度']:
+        if word['word'] in ['溫度','熱','冷','涼','溫暖','暖','冰','凍','度','寒','幾度']:
             return 't'
         if word['word'] in ['濕度','乾','濕','潮濕','乾燥']:
             return 'h'
@@ -133,7 +133,11 @@ def q_type(words):
             return 'a'
     return 'unknown'
 
-
+def r_type(words):
+    for word in words:
+        if word['word'] in ['冷','涼','低','乾','乾燥','冰','凍','寒']
+            return False
+    return True
 
 # Codes for generating message
 # Location finding Codes
@@ -194,13 +198,13 @@ def reply_searching(event, location_n):
 def send_cannot_understand(event):
     line_bot_api.push_message(
         event.source.sender_id,
-        TextSendMessage(text='很抱歉無法辨識您的意思\n您可以問我某地的天氣資料，或是讓我在溫濕度高低、降雨機率高、空氣品質不好時提醒您\n詳細使用範例與方法請輸入「用法」')
+        TextSendMessage(text='很抱歉，我不太懂您的意思\n\n您可以問我某地的天氣資料，或是讓我在某地溫濕度過高或過低、降雨機率較高，或是空氣品質不好時提醒您\n詳細使用範例與方法請輸入「用法」')
     )
 
 def send_cannot_find_location(event):
     line_bot_api.push_message(
         event.source.sender_id,
-        TextSendMessage(text='抱歉，無法找到該地點\n您可以試著用別的詞搜尋\n\n（建議您可以使用地址或較為明顯的地標名稱）' )
+        TextSendMessage(text='很抱歉，我無法找到該地點\n您可以試著用別的詞搜尋\n\n（建議您可以使用地址或較為明顯的地標名稱）' )
     )
 
 def location_checking_flow(event, words):
@@ -283,7 +287,7 @@ def callback():
                     event.source.sender_id,
                     TextSendMessage(text=f)
                 )
-                
+
                 if f == 'usage':
                     line_bot_api.push_message(
                     event.source.sender_id,
