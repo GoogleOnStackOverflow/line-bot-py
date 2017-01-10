@@ -110,12 +110,24 @@ def feature(words):
     t = 'unknown'
     for word in words:
         if word['word'] in reminder_term:
-            t = 'reminder'
+            t = 'r'
         elif word['word'] in ask_term or word['word'] in weather_term:
-            t = 'ask'
+            t = 'a'
         elif word['word'] in cancel_term:
-            t = 'cancel'
+            t = 'c'
     return t
+
+def reminder_type(words):
+    for word in words:
+        if word['word'] in ['降雨','機率','下雨','淋濕','雨']:
+            return 'r'
+        elif word['word'] in ['溫度','熱','冷']:
+            return 't'
+        elif word['word'] in ['濕度','乾','濕']:
+            return 'h'
+        elif word['word'] in ['空氣','髒','PM','霾害','霧霾','霾']:
+            return 'a'
+    return 'unknown'
 
 def map_img(addr, lat, lng):
     marker = '&markers=color:blue%7C'+str(lat)+','+str(lng)
@@ -188,7 +200,8 @@ def callback():
                 words = gen_to_arr(words)
                 location_n = try_match_geo_name(words)
                 f = feature(words)
-                print f
+                if f == 'r':
+                    f += ' :: ' + reminder_type(words)
 
                 line_bot_api.push_message(
                     event.source.sender_id,
