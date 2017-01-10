@@ -73,7 +73,7 @@ parser = WebhookParser(channel_secret)
 not_geo_term = ['天氣','空氣','品質','月','日','年','週','很糟','概況',
     '情形','情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷',
     '熱','冰','涼','雨','雪','霜','霧','霧霾','霾','霾害','好','附近',
-    '的','時候','差','壞','糟','話','乾','濕','乾燥','潮濕','高','低']
+    '的','時候','差','壞','糟','話','乾','濕','乾燥','潮濕','高','低','多']
 
 em_flag = ['d','p','pa','pbei','c','cc','u','e','y','o','h','k','x','w','qt',
     'qv','r','rr','rz','rzt','rzv','ryt','ryv','rg','t','tg','v','vd','vn','vshi',
@@ -121,9 +121,9 @@ def feature(words):
 
 def q_type(words):
     for word in words:
-        if word['word'] in ['降雨','機率','下雨','淋濕','雨']:
+        if word['word'] in ['降雨','下雨','淋濕','雨','降水']:
             return 'r'
-        if word['word'] in ['溫度','熱','冷']:
+        if word['word'] in ['溫度','熱','冷','涼','溫暖','暖','冰','凍','度','幾度']:
             return 't'
         if word['word'] in ['濕度','乾','濕','潮濕','乾燥']:
             return 'h'
@@ -198,7 +198,7 @@ def send_cannot_understand(event):
 def send_cannot_find_location(event):
     line_bot_api.push_message(
         event.source.sender_id,
-        TextSendMessage(text='抱歉，無法找到該地點\n您可以試著用別的詞搜尋' )
+        TextSendMessage(text='抱歉，無法找到該地點\n您可以試著用別的詞搜尋\n\n（建議您可以使用地址或較為明顯的地標名稱）' )
     )
 
 def location_checking_flow(event, words):
