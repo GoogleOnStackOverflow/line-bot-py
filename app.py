@@ -236,7 +236,7 @@ def weather_data_send_flow(event, words):
                         
             line_bot_api.push_message(
                 event.source.sender_id,
-                loc_data_parser(results[0]['geometry']['location']['lat'],results[0]['geometry']['location']['lng'])
+                loc_data_parser(results[0]['geometry']['location']['lat'],results[0]['geometry']['location']['lng'],q_type(words))
             )
         else:
             send_cannot_find_location(event)
