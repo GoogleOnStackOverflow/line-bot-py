@@ -111,9 +111,9 @@ def feature(words):
     for word in words:
         if word['word'] in cancel_term:
             return 'c'
-        if word['word'] in reminder_term:
+        elif word['word'] in reminder_term:
             return 'r'
-        if word['word'] in ask_term or word['word'] in weather_term:
+        elif word['word'] in ask_term or word['word'] in weather_term:
             return 'a'
     return 'unknown'
 
