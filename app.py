@@ -68,6 +68,7 @@ if channel_access_token is None:
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
 
+# Codes for NLP
 # Codes for parsing the geo 
 not_geo_term = ['天氣','空氣','品質','月','日','年','週','很糟','概況',
     '情形','情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷',
@@ -118,7 +119,7 @@ def feature(words):
             t ='a'
     return t
 
-def reminder_type(words):
+def q_type(words):
     for word in words:
         if word['word'] in ['降雨','機率','下雨','淋濕','雨']:
             return 'r'
@@ -130,6 +131,10 @@ def reminder_type(words):
             return 'a'
     return 'unknown'
 
+
+
+# Codes for generating message
+# Location finding Codes
 def map_img(addr, lat, lng):
     marker = '&markers=color:blue%7C'+str(lat)+','+str(lng)
     google_api_host = 'https://maps.googleapis.com/maps/api/staticmap?'
@@ -170,6 +175,31 @@ def loc_data_parser(lat, lng):
         text='正在取得\n'+ str(lat) + ' , ' + str(lng) + '\n附近的資料...'
     )
 
+def location_checking_flow(event, words):
+    location_n = try_match_geo_name(words)
+    if location_n != '':
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text='正在搜尋\'' + location_n + '\'...')
+        )
+
+        results = gmaps.geocode(location_n)
+        if not len(results) == 0:
+            line_bot_api.push_message(
+                event.source.sender_id,
+                geo_loc_parser(results[0])
+            )
+                        
+            line_bot_api.push_message(
+                event.source.sender_id,
+                geo_temp_parser(results[0])
+            )
+        else:
+            line_bot_api.push_message(
+                event.source.sender_id,
+                TextSendMessage(text='抱歉，無法找到該地點\n您可以試著用別的詞搜尋' )
+            )
+
 @app.route('/callback', methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
@@ -199,38 +229,18 @@ def callback():
             if isinstance(event.message, TextMessage):
                 words = pseg.cut(event.message.text)
                 words = gen_to_arr(words)
-                location_n = try_match_geo_name(words)
+                
                 f = feature(words)
-                if f == 'r':
-                    f += ' :: ' + reminder_type(words)
+                if f == 'r' or f == 'a':
+                    f += ' :: ' + q_type(words)
 
                 line_bot_api.push_message(
                     event.source.sender_id,
                     TextSendMessage(text=f)
                 )
 
-                if location_n != '':
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text='正在搜尋\'' + location_n + '\'...')
-                    )
-
-                    results = gmaps.geocode(location_n)
-                    if not len(results) == 0:
-                        line_bot_api.push_message(
-                            event.source.sender_id,
-                            geo_loc_parser(results[0])
-                        )
-                        
-                        line_bot_api.push_message(
-                            event.source.sender_id,
-                            geo_temp_parser(results[0])
-                        )
-                    else:
-                        line_bot_api.push_message(
-                            event.source.sender_id,
-                            TextSendMessage(text='抱歉，無法找到該地點\n您可以試著用別的詞搜尋' )
-                        )
+                if f == 'r':
+                    location_checking_flow(event,words)
                 else:
                     line_bot_api.reply_message(
                         event.reply_token,
