@@ -108,14 +108,15 @@ weather_term = ['天氣','空氣','品質','很糟','概況','情形','乾','濕
 reminder_term = ['如果','要是','話','告訴','提醒','通知','時候']
 cancel_term = ['不要','取消']
 def feature(words):
+    t = 'unknown'
     for word in words:
         if word['word'] in cancel_term:
             return 'c'
-        elif word['word'] in reminder_term:
-            return 'r'
-        elif word['word'] in ask_term or word['word'] in weather_term:
-            return 'a'
-    return 'unknown'
+        if word['word'] in reminder_term:
+            t = 'r'
+        if (word['word'] in ask_term or word['word'] in weather_term) and t == 'unknown':
+            t ='a'
+    return t
 
 def reminder_type(words):
     for word in words:
