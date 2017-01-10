@@ -135,7 +135,7 @@ def q_type(words):
 
 def r_type(words):
     for word in words:
-        if word['word'] in ['冷','涼','低','乾','乾燥','冰','凍','寒']
+        if word['word'] in ['冷','涼','低','乾','乾燥','冰','凍','寒']:
             return False
     return True
 
