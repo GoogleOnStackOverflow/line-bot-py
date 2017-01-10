@@ -180,7 +180,7 @@ def loc_data_parser(lat, lng, event='unknown'):
     }
 
     return TextSendMessage(
-        text='正在取得\n'+ str(lat) + ' , ' + str(lng) + '\n附近的%s資料...' % (event_chinese_enum(event))
+        text='正在取得\n'+ str(lat) + ' , ' + str(lng) + '\n附近的%s資料...' % event_chinese_enum[event]
     )
 
 def reply_searching(event, location_n):
