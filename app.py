@@ -72,7 +72,7 @@ parser = WebhookParser(channel_secret)
 not_geo_term = ['天氣','空氣','品質','月','日','年','週','很糟','概況',
     '情形','情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷',
     '熱','冰','涼','雨','雪','霜','霧','霧霾','霾','霾害','好','附近',
-    '的','時候','差','壞','糟','話']
+    '的','時候','差','壞','糟','話','乾','濕','乾燥','潮濕']
 
 em_flag = ['d','p','pa','pbei','c','cc','u','e','y','o','h','k','x','w','qt',
     'qv','r','rr','rz','rzt','rzv','ryt','ryv','rg','t','tg','v','vd','vn','vshi',
@@ -82,7 +82,8 @@ def is_n_keywords(text):
     return (
         text in not_geo_term or
         text.find('點') != -1 or
-        text.find('很') != -1
+        text.find('很') != -1 or
+        text.find('於') != -1
     )
 
 def gen_to_arr(words):
