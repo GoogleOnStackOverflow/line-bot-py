@@ -280,22 +280,15 @@ def callback():
                 words = gen_to_arr(words)
                 
                 f = feature(words)
-                if f == 'r' or f == 'a':
-                    f += ' :: ' + q_type(words)
-
-                line_bot_api.push_message(
-                    event.source.sender_id,
-                    TextSendMessage(text=f)
-                )
 
                 if f == 'usage':
                     line_bot_api.push_message(
                     event.source.sender_id,
                     TextSendMessage(text='用法：')
                 )
-                elif f in ['r :: a','r :: t','r :: h','r :: r']:
+                elif f == 'r':
                     location_checking_flow(event,words)
-                elif f in ['a :: a','a :: t','a :: h','a :: r','a :: unknown']:
+                elif f == 'a':
                     weather_data_send_flow(event, words)
                 else:
                     send_cannot_understand(event)
