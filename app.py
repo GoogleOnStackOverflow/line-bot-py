@@ -100,7 +100,7 @@ def try_match_geo_name(words):
     return t
 
 # Codes for parsing feature type
-ask_term = ['問','知道','想','請問','詢問','嗎','有','沒','沒有','?','？']
+ask_term = ['問','知道','想','請問','詢問','嗎','有','沒','沒有','?','？','如何','怎樣']
 weather_term = ['天氣','空氣','品質','月','日','年','週','很糟','概況',
     '情形','情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷',
     '熱','冰','涼','雨','雪','霜','霧','霧霾','霾','霾害']
@@ -109,10 +109,10 @@ cancel_term = ['不要','取消']
 def feature(words):
     t = 'unknown'
     for word in words:
-        if word['word'] in ask_term:
-            t = 'ask'
-        elif word['word'] in reminder_term:
+        if word['word'] in reminder_term:
             t = 'reminder'
+        elif word['word'] in ask_term or word['word'] in weather_term:
+            t = 'ask'
         elif word['word'] in cancel_term:
             t = 'cancel'
     return t
