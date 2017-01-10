@@ -103,7 +103,7 @@ cancel_term = ['不要','取消']
 def feature(words):
     t = 'unknown'
     for word, flag in words:
-        print(word)
+        print word
         if word in ask_term:
             t = 'ask'
         elif word in reminder_term:
@@ -181,10 +181,12 @@ def callback():
             if isinstance(event.message, TextMessage):
                 words = pseg.cut(event.message.text)
                 location_n = try_match_geo_name(words)
+                f = feature(words)
+                print f
 
                 line_bot_api.push_message(
                     event.source.sender_id,
-                    TextSendMessage(text=feature(words))
+                    TextSendMessage(text=f)
                 )
 
                 if location_n != '':
