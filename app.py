@@ -103,6 +103,7 @@ cancel_term = ['不要','取消']
 def feature(words):
     t = 'unknown'
     for word, flag in words:
+        print(word)
         if word in ask_term:
             t = 'ask'
         elif word in reminder_term:
