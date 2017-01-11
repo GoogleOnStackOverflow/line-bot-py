@@ -234,24 +234,26 @@ def send_loc_data(lat, lng, event, u_event):
         else:
             line_bot_api.push_message(
                 u_event.source.sender_id,
-                TemplateSendMessage(
-                    alt_text=cond['con'],
-                    template=ButtonsTemplate(
-                        thumbnail_image_url=cond['img'],
-                        title=cond['con'],
-                        text='現在氣溫:'+ str(get_close_position_data('t',lat, lng))+'\n濕度：'+ str(get_close_position_data('h',lat, lng))
-                    )
+                ImageSendMessage(
+                    original_content_url=cond['img'],
+                    preview_image_url=cond['img']
                 )
+            )
+            t = cond['con'] + '\n'
+            t += '現在氣溫:'+ str(get_close_position_data('t',lat, lng))+'\n濕度：'+ str(get_close_position_data('h',lat, lng))
+            line_bot_api.push_message(
+                u_event.source.sender_id,
+                TextSendMessage(text=t)
             )
     elif event == 't':
         line_bot_api.push_message(
             u_event.source.sender_id,
-            TextSendMessage(text='目前溫度大約是%s度' % get_close_position_data('t',lat, lng))
+            TextSendMessage(text='目前溫度大約是%s度' % str(get_close_position_data('t',lat, lng)))
         )
     elif event == 'h':
         line_bot_api.push_message(
             u_event.source.sender_id,
-            TextSendMessage(text='目前濕度大約是%s%' % get_close_position_data('h',lat, lng))
+            TextSendMessage(text='目前濕度大約是' + str(get_close_position_data('h',lat, lng)) + '%')
         )
     elif event == 'a':
         line_bot_api.push_message(
