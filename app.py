@@ -19,6 +19,7 @@ import sys
 import googlemaps
 import pyrebase
 import hashlib
+import requests
 import jieba
 import jieba.posseg as pseg
 
@@ -36,7 +37,7 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, 
     LocationMessage, TemplateSendMessage, 
-    ButtonsTemplate,
+    ButtonsTemplate, ImageSendMessage
     PostbackTemplateAction, PostbackEvent,
     LocationSendMessage
 )
@@ -82,16 +83,43 @@ def distance(lat1, lon1, lat2, lon2):
     km = 6367 * c
     return km
 
-def get_close_position_hash(datatype, lat, lng):
+def get_close_position_data(datatype, lat, lng):
     now_dis = 6367 * 6
-    r = ''
     all_data = db.child(datatype).get()
     for data in all_data.each():
         d = distance(lat, lng, (data.val())['lat'], (data.val())['lng'])
         if now_dis > d:
-            r = data.key()
+            r = data
             now_dis = d
-    return r
+    return (r.val())['value']
+
+# apixu data
+def get_chinese_condition_term(code):
+    r = requests.get('http://www.apixu.com/doc/conditions.json')
+    for cond in (r.json()):
+        if cond['code'] == code:
+            r = cond['language']
+            break
+    for lang in r:
+        if lang['lang_iso'] == 'zh_tw':
+            return lang
+
+def get_weather_condition(lat,lng):
+    r = requests.get('http://api.apixu.com/v1/current.json?key=0c8080a46f27433ea9b191737171101&q='+str(lat)+','+str(lng))
+    if not (r.json()).has_key('error'):
+        r = r.json()
+        current = r['current']
+        chinese_term = get_chinese_condition_term(current['condition']['code'])
+        if current['is_day'] != 0:
+            con_term = chinese_term['day_text']
+        else:
+            con_term = chinese_term['night_text']
+        return {
+            'img':'http:' + current['condition']['icon'],
+            'con':con_term,
+        }
+    else:
+        return 'unknown'
 
 # Codes for NLP
 # Codes for parsing the geo 
@@ -201,18 +229,50 @@ def geo_loc_parser(result):
         longitude=result['geometry']['location']['lng']
     )
 
-def loc_data_parser(lat, lng, event='unknown'):
+def send_loc_data(lat, lng, event='unknown', u_event):
     event_chinese_enum = {
         'unknown':'天氣',
         'a':'空氣品質',
         't':'溫度',
         'h':'濕度',
-        'r':'降雨機率'
+        'r':'天氣'
     }
 
-    return TextMessage(
-        text=str(lat) + ' , ' + str(lng)+'最近的觀測點是'+ get_close_position_hash('t',lat,lng)
-    )
+    if event == 'unknown' or event == 'r':
+        cond = get_weather_condition(lat, lng)
+        if cond == 'unknown':
+            line_bot_api.push_message(
+                u_event.source.sender_id,
+                TextSendMessage(text='很抱歉，我找不到該地點的天氣資訊' )
+            )
+        else:
+            line_bot_api.push_message(
+                u_event.source.sender_id,
+                TemplateSendMessage(
+                    alt_text=cond['con'],
+                    template=ButtonsTemplate(
+                        thumbnail_image_url=cond['img'],
+                        title=cond['con'],
+                        text='現在氣溫: %s\n濕度：%s%\n' % (get_close_position_data('t',lat, lng), get_close_position_data('h',lat, lng)),
+                        actions=[]
+                    )
+                )
+            )
+    elif event == 't':
+        line_bot_api.push_message(
+            u_event.source.sender_id,
+            TextSendMessage(text='目前溫度大約是%s度' % get_close_position_data('t',lat, lng))
+        )
+    elif event == 'h':
+        line_bot_api.push_message(
+            u_event.source.sender_id,
+            TextSendMessage(text='目前濕度大約是%s%' % get_close_position_data('h',lat, lng))
+        )
+    elif event == 'a':
+        line_bot_api.push_message(
+            u_event.source.sender_id,
+            TextSendMessage(text='目前 PM 2.5 值大約是%s, PSI值則為 %s' % (get_close_position_data('pm25',lat, lng),get_close_position_data('psi',lat, lng)))
+        )
 
 def reply_searching(event, location_n):
     line_bot_api.reply_message(
@@ -264,11 +324,8 @@ def weather_data_send_flow(event, words):
                 event.source.sender_id,
                 geo_loc_parser(results[0])
             )
-                        
-            line_bot_api.push_message(
-                event.source.sender_id,
-                loc_data_parser(results[0]['geometry']['location']['lat'],results[0]['geometry']['location']['lng'],q_type(words))
-            )
+            
+            send_loc_data(results[0]['geometry']['location']['lat'], results[0]['geometry']['location']['lng'], q_type(words), event)
         else:
             send_cannot_find_location(event)
     else:
