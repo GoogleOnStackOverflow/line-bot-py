@@ -21,17 +21,19 @@ def db_data_obj(datatype, lat, lng, value, source, time):
     return {'datatype':datatype, 'data':{'lat':lat, 'lng':lng, 'value':value, 'source':source, 'time':time}}
 
 def parse_api_data_one(data, source):
-    if source == 'LASS' or source == 'AIRBOX':
-        return [
-            db_data_obj('t', data['gps_lat'], data['gps_lon'], data['s_t0'], source, data['timestamp']),
-            db_data_obj('h', data['gps_lat'], data['gps_lon'], data['s_h0'], source, data['timestamp']),
-            db_data_obj('pm25', data['gps_lat'], data['gps_lon'], data['s_d0'], source, data['timestamp'])
-        ]
-    elif source == 'EPA':
-        return [
-            db_data_obj('pm25', data['gps_lat'], data['gps_lon'], data['PM2_5'], source, data['timestamp']),
-            db_data_obj('psi', data['gps_lat'], data['gps_lon'], data['PSI'], source, data['timestamp'])
-        ]
+    r = []
+    if data.has_key('s_t0'):
+        r.append(db_data_obj('t', data['gps_lat'], data['gps_lon'], data['s_t0'], source, data['timestamp']))
+    if data.has_key('s_h0'):
+        r.append(db_data_obj('h', data['gps_lat'], data['gps_lon'], data['s_h0'], source, data['timestamp']))
+    if data.has_key('s_d0'):
+        r.append(db_data_obj('pm25', data['gps_lat'], data['gps_lon'], data['s_d0'], source, data['timestamp']))
+    if data.has_key('PM2_5'):
+        r.append(db_data_obj('pm25', data['gps_lat'], data['gps_lon'], data['PM2_5'], source, data['timestamp']))
+    if data.has_key('PSI'):
+        r.append(db_data_obj('psi', data['gps_lat'], data['gps_lon'], data['PSI'], source, data['timestamp']))
+    
+    return r
 
 def parse_api_data(arr, source):
     r = []
