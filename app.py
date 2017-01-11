@@ -53,9 +53,6 @@ firebase_config = {
 # 'messagingSenderId': '383008521760'
 }
 
-firebase = pyrebase.initialize_app(firebase_config)
-db = firebase.database()
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'this_should_be_configured')
 
@@ -114,6 +111,8 @@ def geo_child_name(lat, lng):
 
 def update_db(arr):
     for data in arr:
+        firebase = pyrebase.initialize_app(firebase_config)
+        db = firebase.database()
         db.child(data['datatype']).child(geo_child_name(data['data']['lat'],data['data']['lng'])).update({
             'lat':data['data']['lat'],
             'lng':data['data']['lng'],
