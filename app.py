@@ -123,7 +123,7 @@ weather_term = ['天氣','空氣','品質','很糟','概況','情形','乾','濕
     '情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷',
     '熱','冰','涼','雨','雪','霜','霧','霧霾','霾','霾害','空','空汙','污染']
 reminder_term = ['如果','要是','話','告訴','提醒','通知','時候']
-cancel_term = ['不要','取消']
+cancel_term = ['不要','取消','不','別','別再']
 def feature(words):
     t = 'unknown'
     for word in words:
@@ -267,7 +267,6 @@ def weather_data_send_flow(event, words):
 
 @app.route('/callback', methods=['POST'])
 def callback():
-    renew_db()
     signature = request.headers['X-Line-Signature']
 
     # get request body as text
@@ -301,7 +300,7 @@ def callback():
                 if f == 'usage':
                     line_bot_api.push_message(
                     event.source.sender_id,
-                    TextSendMessage(text='用法：')
+                    TextSendMessage(text='如果想知道所在位置或特定區域天氣如何，請輸入：某地區（可以小範圍喔！）＋冷（天氣狀況）嗎？\n如果想要開啟通知，請輸入：如果、要是＋某地區＋天氣條件，告訴我！\n如果想要關閉提醒，請輸入：別、不要告訴我＋某地區＋天氣條件了！')
                 )
                 elif f == 'r':
                     location_checking_flow(event,words)
@@ -327,6 +326,5 @@ if __name__ == '__main__':
     arg_parser.add_argument('-p', '--port', default=8000, help='port')
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
-
 
     app.run(debug=options.debug)
