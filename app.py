@@ -49,8 +49,8 @@ firebase_config = {
   'apiKey': 'AIzaSyAbFqX4W-2GLUGfPsXPO5oP0cJQdbbqyaM',
   'authDomain': 'line-bot-db.firebaseapp.com',
   'databaseURL': 'https://line-bot-db.firebaseio.com',
-  'storageBucket': 'line-bot-db.appspot.com'
-# 'messagingSenderId': '383008521760'
+  'storageBucket': 'line-bot-db.appspot.com',
+  'messagingSenderId': '383008521760'
 }
 
 app = Flask(__name__)
