@@ -259,7 +259,7 @@ def send_loc_data(lat, lng, event, u_event):
             u_event.source.sender_id,
             TextSendMessage(text='目前 PM 2.5 值大約是%s, PSI值則為 %s' % (get_close_position_data('pm25',lat, lng),get_close_position_data('psi',lat, lng)))
         )
-    else
+    else:
         send_cannot_understand(u_event)
 
 def reply_searching(event, location_n):
