@@ -239,7 +239,7 @@ def send_loc_data(lat, lng, event, u_event):
                     template=ButtonsTemplate(
                         thumbnail_image_url=cond['img'],
                         title=cond['con'],
-                        text='現在氣溫:'+ str(get_close_position_data('t',lat, lng))+'\n濕度：'+ str(get_close_position_data('h',lat, lng))
+                        text='現在氣溫:'+ str(get_close_position_data('t',lat, lng))+'\n濕度：'+ str(get_close_position_data('h',lat, lng)),
                         actions=[]
                     )
                 )
