@@ -235,7 +235,7 @@ def send_loc_data(lat, lng, event, u_event):
             line_bot_api.push_message(
                 u_event.source.sender_id,
                 ImageSendMessage(
-                    original_content_url=cond['img'],
+                    original_content_url=cond['img']
                 )
             )
             t = cond['con'] + '\n'
