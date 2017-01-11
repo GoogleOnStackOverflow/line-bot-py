@@ -18,8 +18,6 @@ import os
 import sys
 import googlemaps
 import pyrebase
-import requests
-import threading
 import hashlib
 import jieba
 import jieba.posseg as pseg
@@ -83,6 +81,17 @@ def distance(lat1, lon1, lat2, lon2):
     c = 2 * asin(sqrt(a)) 
     km = 6367 * c
     return km
+
+def get_close_position_hash(datatype, lat, lng):
+    now_dis = 6367 * 6
+    r = ''
+    if all_data = db.child(datatype).get():
+        for data in all_data.each():
+            d = distance(lat, lng, (data.val())['lat'], (data.val())['lng'])
+            if now_dis > d:
+                r = data.key()
+                now_dis = d
+    return r
 
 # Codes for NLP
 # Codes for parsing the geo 
@@ -201,8 +210,8 @@ def loc_data_parser(lat, lng, event='unknown'):
         'r':'降雨機率'
     }
 
-    return TextSendMessage(
-        text='正在取得\n'+ str(lat) + ' , ' + str(lng) + '\n附近的%s資料...' % event_chinese_enum[event]
+    return TextMessage(
+        text=str(lat) + ' , ' + str(lng)+'最近的觀測點是'+ get_close_position_hash(lat,lng,'t')
     )
 
 def reply_searching(event, location_n):
