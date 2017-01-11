@@ -232,12 +232,6 @@ def send_loc_data(lat, lng, event, u_event):
                 TextSendMessage(text='很抱歉，我找不到該地點的天氣資訊' )
             )
         else:
-            line_bot_api.push_message(
-                u_event.source.sender_id,
-                ImageSendMessage(
-                    original_content_url=cond['img']
-                )
-            )
             t = cond['con'] + '\n'
             t += '現在氣溫:'+ str(get_close_position_data('t',lat, lng))+'\n濕度：'+ str(get_close_position_data('h',lat, lng))
             line_bot_api.push_message(
