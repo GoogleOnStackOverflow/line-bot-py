@@ -223,15 +223,7 @@ def geo_loc_parser(result):
         longitude=result['geometry']['location']['lng']
     )
 
-def send_loc_data(lat, lng, event='unknown', u_event):
-    event_chinese_enum = {
-        'unknown':'天氣',
-        'a':'空氣品質',
-        't':'溫度',
-        'h':'濕度',
-        'r':'天氣'
-    }
-
+def send_loc_data(lat, lng, event, u_event):
     if event == 'unknown' or event == 'r':
         cond = get_weather_condition(lat, lng)
         if cond == 'unknown':
@@ -267,6 +259,8 @@ def send_loc_data(lat, lng, event='unknown', u_event):
             u_event.source.sender_id,
             TextSendMessage(text='目前 PM 2.5 值大約是%s, PSI值則為 %s' % (get_close_position_data('pm25',lat, lng),get_close_position_data('psi',lat, lng)))
         )
+    else
+        send_cannot_understand(u_event)
 
 def reply_searching(event, location_n):
     line_bot_api.reply_message(
@@ -372,10 +366,7 @@ def callback():
             elif isinstance(event.message, LocationMessage):
                 lat = event.message.latitude
                 lng = event.message.longitude
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    loc_data_parser(lat, lng)
-                )
+                send_loc_data(lat, lng, 'unknown', event)
 
     return 'OK'
 
