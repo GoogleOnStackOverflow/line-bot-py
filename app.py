@@ -239,7 +239,7 @@ def send_loc_data(lat, lng, event, u_event):
                     template=ButtonsTemplate(
                         thumbnail_image_url=cond['img'],
                         title=cond['con'],
-                        text='現在氣溫: %s\n濕度：%s%\n' % (get_close_position_data('t',lat, lng), get_close_position_data('h',lat, lng)),
+                        text='現在氣溫:'+ str(get_close_position_data('t',lat, lng))+'\n濕度：'+ str(get_close_position_data('h',lat, lng))
                         actions=[]
                     )
                 )
@@ -257,7 +257,7 @@ def send_loc_data(lat, lng, event, u_event):
     elif event == 'a':
         line_bot_api.push_message(
             u_event.source.sender_id,
-            TextSendMessage(text='目前 PM 2.5 值大約是%s, PSI值則為 %s' % (get_close_position_data('pm25',lat, lng),get_close_position_data('psi',lat, lng)))
+            TextSendMessage(text='目前 PM 2.5 值大約是 ' + str(get_close_position_data('pm25',lat, lng)) + '\nPSI 值則為 ' + str(get_close_position_data('psi',lat, lng))
         )
     else:
         send_cannot_understand(u_event)
