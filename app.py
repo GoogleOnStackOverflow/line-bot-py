@@ -114,12 +114,12 @@ def geo_child_name(lat, lng):
 
 def update_db(arr):
     for data in arr:
-        db.child(data['datatype']).child(geo_child_name(data['data']['lat'],data['data']['lng'])).update({
+        db.child(data['datatype']).child(geo_child_name(data['data']['lat'],data['data']['lng'])).set({
             'lat':data['data']['lat'],
             'lng':data['data']['lng'],
             'value':data['data']['value'],
             'source':data['data']['source'],
-            'timestamp':data['data']['time']
+            'time':data['data']['time']
         })
 
 def renew_api_data(url, source):
@@ -322,6 +322,7 @@ def weather_data_send_flow(event, words):
 
 @app.route('/callback', methods=['POST'])
 def callback():
+    renew_db()
     signature = request.headers['X-Line-Signature']
 
     # get request body as text
@@ -373,8 +374,6 @@ def callback():
                 )
 
     return 'OK'
-
-renew_db()
 
 if __name__ == '__main__':
     arg_parser = ArgumentParser(
