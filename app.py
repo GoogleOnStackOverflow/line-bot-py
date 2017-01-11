@@ -34,13 +34,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 
-from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, 
-    LocationMessage, TemplateSendMessage, 
-    ButtonsTemplate, ImageSendMessage
-    PostbackTemplateAction, PostbackEvent,
-    LocationSendMessage
-)
+from linebot.models import *
 
 gmaps = googlemaps.Client(key='AIzaSyCgrAXdRBBTzDGjVfyALtpxBuocTZ_6XZ4')
 
