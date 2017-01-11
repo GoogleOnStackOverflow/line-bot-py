@@ -6,3 +6,4 @@ googlemaps
 pyrebase
 jieba
 requests
+hashlib

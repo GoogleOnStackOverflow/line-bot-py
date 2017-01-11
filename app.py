@@ -20,6 +20,7 @@ import googlemaps
 import pyrebase
 import requests
 import threading
+import hashlib
 import jieba
 import jieba.posseg as pseg
 
@@ -105,9 +106,15 @@ def parse_api_data(arr, source):
         r += parse_api_data_one(data, source)
     return r
 
+def geo_child_name(lat, lng):
+    sha_1 = hashlib.sha1()
+    sha_1.update(str(lat)+','+str(lng))
+    return sha_1.hexdigest()
+    
+
 def update_db(arr):
     for data in arr:
-        db.child(data['datatype']).child(str(data['data']['lat'])+','+str(data['data']['lng'])).update({
+        db.child(data['datatype']).child(geo_child_name(data['data']['lat'],data['data']['lng'])).update({
             'lat':data['data']['lat'],
             'lng':data['data']['lng'],
             'value':data['data']['value'],
@@ -367,8 +374,6 @@ def callback():
 
     return 'OK'
 
-renew_db()
-
 if __name__ == '__main__':
     arg_parser = ArgumentParser(
         usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
@@ -378,3 +383,4 @@ if __name__ == '__main__':
     options = arg_parser.parse_args()
 
     app.run(debug=options.debug)
+    renew_db()
