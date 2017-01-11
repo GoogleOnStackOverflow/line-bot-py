@@ -107,7 +107,7 @@ def parse_api_data(arr, source):
 
 def update_db(arr):
     for data in arr:
-        db.child(data['datatype']).child(data['data']['lat']+','+data['data']['lng']).update({
+        db.child(data['datatype']).child(str(data['data']['lat'])+','+str(data['data']['lng'])).update({
             'lat':data['data']['lat'],
             'lng':data['data']['lng'],
             'value':data['data']['value'],
