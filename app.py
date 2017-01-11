@@ -236,7 +236,6 @@ def send_loc_data(lat, lng, event, u_event):
                 u_event.source.sender_id,
                 ImageSendMessage(
                     original_content_url=cond['img'],
-                    preview_image_url=cond['img']
                 )
             )
             t = cond['con'] + '\n'
