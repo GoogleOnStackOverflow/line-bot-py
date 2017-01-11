@@ -257,7 +257,7 @@ def send_loc_data(lat, lng, event, u_event):
     elif event == 'a':
         line_bot_api.push_message(
             u_event.source.sender_id,
-            TextSendMessage(text='目前 PM 2.5 值大約是 ' + str(get_close_position_data('pm25',lat, lng)) + '\nPSI 值則為 ' + str(get_close_position_data('psi',lat, lng))
+            TextSendMessage(text='目前 PM 2.5 值大約是 ' + str(get_close_position_data('pm25',lat, lng)) + '\nPSI 值則為 ' + str(get_close_position_data('psi',lat, lng)))
         )
     else:
         send_cannot_understand(u_event)
