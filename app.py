@@ -85,12 +85,12 @@ def distance(lat1, lon1, lat2, lon2):
 def get_close_position_hash(datatype, lat, lng):
     now_dis = 6367 * 6
     r = ''
-    if all_data = db.child(datatype).get():
-        for data in all_data.each():
-            d = distance(lat, lng, (data.val())['lat'], (data.val())['lng'])
-            if now_dis > d:
-                r = data.key()
-                now_dis = d
+    all_data = db.child(datatype).get():
+    for data in all_data.each():
+        d = distance(lat, lng, (data.val())['lat'], (data.val())['lng'])
+        if now_dis > d:
+            r = data.key()
+            now_dis = d
     return r
 
 # Codes for NLP
