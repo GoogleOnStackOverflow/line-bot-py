@@ -118,7 +118,7 @@ def update_db(arr):
 def renew_api_data(url, source):
     print('Retrieving data from API: ' + url)
     r = requests.get(url)
-    if r.status_code == 200 or r.status_code == '200'
+    if r.status_code == 200 or r.status_code == '200':
         arr_to_parse = (r.json())['feeds']
         if arr_to_parse:
             arr_to_parse = parse_api_data(arr_to_parse, source)
