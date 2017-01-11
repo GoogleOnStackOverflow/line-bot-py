@@ -92,7 +92,7 @@ def get_chinese_condition_term(code):
     r = requests.get('http://www.apixu.com/doc/conditions.json')
     for cond in (r.json()):
         if cond['code'] == code:
-            r = cond['language']
+            r = cond['languages']
             break
     for lang in r:
         if lang['lang_iso'] == 'zh_tw':
