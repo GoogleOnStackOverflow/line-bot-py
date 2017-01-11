@@ -53,6 +53,9 @@ firebase_config = {
   'messagingSenderId': '383008521760'
 }
 
+firebase = pyrebase.initialize_app(firebase_config)
+db = firebase.database()
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'this_should_be_configured')
 
@@ -111,9 +114,7 @@ def geo_child_name(lat, lng):
 
 def update_db(arr):
     for data in arr:
-        firebase = pyrebase.initialize_app(firebase_config)
-        db = firebase.database()
-        db.child(data['datatype']).child(geo_child_name(data['data']['lat'],data['data']['lng'])).update({
+        db.child(data['datatype']).child(geo_child_name(data['data']['lat'],data['data']['lng'])).set({
             'lat':data['data']['lat'],
             'lng':data['data']['lng'],
             'value':data['data']['value'],
@@ -132,7 +133,7 @@ def renew_api_data(url, source):
 
 def renew_db():
     print('renewing db')
-    threading.Timer(300.0, renew_db).start() # called every five minutes
+    #threading.Timer(300.0, renew_db).start() # called every five minutes
     renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-lass.json', 'LASS')
     renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-epa.json', 'EPA')
     renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-airbox.json', 'AIRBOX')
