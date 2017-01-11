@@ -114,12 +114,12 @@ def geo_child_name(lat, lng):
 
 def update_db(arr):
     for data in arr:
-        db.child(data['datatype']).child(geo_child_name(data['data']['lat'],data['data']['lng'])).set({
+        db.child(data['datatype']).child(geo_child_name(data['data']['lat'],data['data']['lng'])).update({
             'lat':data['data']['lat'],
             'lng':data['data']['lng'],
             'value':data['data']['value'],
             'source':data['data']['source'],
-            'time':data['data']['time']
+            'timestamp':data['data']['time']
         })
 
 def renew_api_data(url, source):
