@@ -125,6 +125,7 @@ def renew_api_data(url, source):
             update_db(arr_to_parse)
 
 def renew_db():
+    print('renewing db')
     threading.Timer(300.0, renew_db_from_api).start() # called every five minutes
     renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-lass.json', 'LASS')
     renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-epa.json', 'EPA')
@@ -375,5 +376,6 @@ if __name__ == '__main__':
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
 
-    app.run(debug=options.debug)
     renew_db()
+
+    app.run(debug=options.debug)
