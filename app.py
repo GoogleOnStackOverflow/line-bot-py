@@ -126,7 +126,7 @@ def renew_api_data(url, source):
 
 def renew_db():
     print('renewing db')
-    threading.Timer(300.0, renew_db_from_api).start() # called every five minutes
+    threading.Timer(300.0, renew_db).start() # called every five minutes
     renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-lass.json', 'LASS')
     renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-epa.json', 'EPA')
     renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-airbox.json', 'AIRBOX')
