@@ -18,10 +18,13 @@ import os
 import sys
 import googlemaps
 import pyrebase
+import requests
+import threading
 import jieba
 import jieba.posseg as pseg
 
 from argparse import ArgumentParser
+from math import radians, cos, sin, asin, sqrt
 
 from flask import Flask, request, abort
 from linebot import (
@@ -67,6 +70,66 @@ if channel_access_token is None:
 
 line_bot_api = LineBotApi(channel_access_token)
 parser = WebhookParser(channel_secret)
+
+# Codes for retrieving data
+def distance(lat1, lon1, lat2, lon2):
+    # convert decimal degrees to radians 
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+    # haversine formula 
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    km = 6367 * c
+    return km
+
+def db_data_obj(datatype, lat, lng, value, source, time):
+    return {'datatype':datatype, 'data':{'lat':lat, 'lng':lng, 'value':value, 'source':source, 'time':time}}
+
+def parse_api_data_one(data, source):
+    if source == 'LASS' or source == 'AIRBOX':
+        return [
+            db_data_obj('t', data['gps_lat'], data['gps_lon'], data['s_t0'], source, data['timestamp']),
+            db_data_obj('h', data['gps_lat'], data['gps_lon'], data['s_h0'], source, data['timestamp']),
+            db_data_obj('pm25', data['gps_lat'], data['gps_lon'], data['s_d0'], source, data['timestamp'])
+        ]
+    elif source == 'EPA':
+        return [
+            db_data_obj('pm25', data['gps_lat'], data['gps_lon'], data['PM2_5'], source, data['timestamp']),
+            db_data_obj('psi', data['gps_lat'], data['gps_lon'], data['PSI'], source, data['timestamp'])
+        ]
+
+def parse_api_data(arr, source):
+    r = []
+    for data in arr:
+        r += parse_api_data_one(data, source)
+    return r
+
+def update_db(arr):
+    for data in arr:
+        db.child(data['datatype']).child(data['data']['lat']+','+data['data']['lng']).update({
+            'lat':data['data']['lat'],
+            'lng':data['data']['lng'],
+            'value':data['data']['value'],
+            'source':data['data']['source'],
+            'time':data['data']['time']
+        })
+
+def renew_api_data(url, source):
+    print('Retrieving data from API: ' + url)
+    r = requests.get(url)
+    if r.status_code == 200 or r.status_code == '200'
+        arr_to_parse = (r.json())['feeds']
+        if arr_to_parse:
+            arr_to_parse = parse_api_data(arr_to_parse, source)
+            update_db(arr_to_parse)
+
+def renew_db():
+    threading.Timer(300.0, renew_db_from_api).start() # called every five minutes
+    renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-lass.json', 'LASS')
+    renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-epa.json', 'EPA')
+    renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-airbox.json', 'AIRBOX')
+
 
 # Codes for NLP
 # Codes for parsing the geo 
@@ -313,3 +376,4 @@ if __name__ == '__main__':
     options = arg_parser.parse_args()
 
     app.run(debug=options.debug)
+    renew_db()
