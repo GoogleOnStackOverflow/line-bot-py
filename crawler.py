@@ -65,7 +65,7 @@ def renew_api_data(url, source):
             update_db(arr_to_parse)
 
 def renew_db():
-	threading.Timer(300.0, renew_db).start() # called every five minutes
+    threading.Timer(300.0, renew_db).start() # called every five minutes
     print('renewing db')
     #threading.Timer(300.0, renew_db).start() # called every five minutes
     renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-lass.json', 'LASS')
@@ -73,4 +73,4 @@ def renew_db():
     renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-airbox.json', 'AIRBOX')
 
 if __name__ == '__main__':
-	renew_db()
+    renew_db()
