@@ -374,6 +374,8 @@ def callback():
 
     return 'OK'
 
+renew_db()
+
 if __name__ == '__main__':
     arg_parser = ArgumentParser(
         usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
@@ -383,4 +385,3 @@ if __name__ == '__main__':
     options = arg_parser.parse_args()
 
     app.run(debug=options.debug)
-    renew_db()
