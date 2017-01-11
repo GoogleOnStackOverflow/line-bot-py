@@ -5,5 +5,4 @@ gunicorn
 googlemaps
 pyrebase
 jieba
-threading
 requests
