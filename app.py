@@ -211,7 +211,7 @@ def loc_data_parser(lat, lng, event='unknown'):
     }
 
     return TextMessage(
-        text=str(lat) + ' , ' + str(lng)+'最近的觀測點是'+ get_close_position_hash(lat,lng,'t')
+        text=str(lat) + ' , ' + str(lng)+'最近的觀測點是'+ get_close_position_hash('t',lat,lng)
     )
 
 def reply_searching(event, location_n):
