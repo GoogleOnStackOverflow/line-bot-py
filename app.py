@@ -131,9 +131,9 @@ def set_reminder(event, lat, lng,qt, rt):
             event.source.sender_id,
             TextSendMessage(text='已為您設定 '+str(lat)+','+str(lng)+' 附近的空氣品質提醒')
         )
-        nearp = get_close_position_key('pm25', lat, lng)
+        nearp = get_close_position_key('pm25', float(lat), float(lng))
         db.child('user').child(str(event.source.sender_id)).child('pm25').child(nearp).set(True)
-        nearp = get_close_position_key('psi', lat, lng)
+        nearp = get_close_position_key('psi', float(lat), float(lng))
         db.child('user').child(str(event.source.sender_id)).child('psi').child(nearp).set(True)
     elif not qt == 'unknown':
         if not qt == 'r':
@@ -150,12 +150,12 @@ def set_reminder(event, lat, lng,qt, rt):
                 event.source.sender_id,
                 TextSendMessage(text='已為您設定 '+str(lat)+','+str(lng)+' 附近'+tt1+'的提醒')
             )
-            nearp = get_close_position_key(qt, lat, lng)
+            nearp = get_close_position_key(qt, float(lat), float(lng))
             db.child('user').child(str(event.source.sender_id)).child(qt).child(nearp).set(rt)
     else:
         line_bot_api.push_message(
             event.source.sender_id,
-            TextSendMessage(text='很抱歉，目前提醒功能僅限於提醒溫度、濕度、空氣品質，謝謝' )
+            TextSendMessage(text='很抱歉，目前提醒功能僅限於提醒溫度、濕度、空氣品質唷' )
         )
 
 def remove_all_reminder(event):
