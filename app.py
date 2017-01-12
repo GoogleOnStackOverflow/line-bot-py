@@ -321,8 +321,8 @@ def send_loc_data(lat, lng, event, u_event):
         else:
             pm = get_close_position_data('pm25',lat, lng)
             t = cond['con'] + '\n'
-            t += '氣溫:'+ str(get_close_position_data('t',lat, lng))+'\n濕度：'+ str(get_close_position_data('h',lat, lng))
-            t += '\n空氣品質資料：\nPM 2.5 值為 ' + str(pm) + '\nPSI 值則為 ' + str(get_close_position_data('psi',lat, lng))
+            t += '氣溫: '+ str(get_close_position_data('t',lat, lng))+'度\n濕度： '+ str(get_close_position_data('h',lat, lng))
+            t += '%\n空氣品質資料：\nPM 2.5 值為 ' + str(pm) + '\nPSI 值則為 ' + str(get_close_position_data('psi',lat, lng))
             t += '\n' + pm_string(float(pm))
 
             line_bot_api.push_message(
