@@ -379,6 +379,7 @@ def send_user_all_remind(event):
         reminds = db.child('user').child(event.source.user_id).get()
         t = ''
         for remind in reminds.each():
+            remind = remind.val()
             qt = remind['type']
             if qt == 't' :
                 tt1 = '溫度'
