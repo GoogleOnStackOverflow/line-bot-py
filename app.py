@@ -132,9 +132,9 @@ def set_reminder(event, lat, lng,qt, rt):
             TextSendMessage(text='已為您設定 '+str(lat)+','+str(lng)+' 附近的空氣品質提醒')
         )
         nearp = get_close_position_key('pm25', float(lat), float(lng))
-        db.child('user').child(str(event.source.sender_id)).child('pm25').child(nearp).set(True)
+        db.child('user').child(str(event.source.sender_id)).child('pm25').child(nearp).child('True').set()
         nearp = get_close_position_key('psi', float(lat), float(lng))
-        db.child('user').child(str(event.source.sender_id)).child('psi').child(nearp).set(True)
+        db.child('user').child(str(event.source.sender_id)).child('psi').child(nearp).child('True').set()
     elif not qt == 'unknown':
         if not qt == 'r':
             if qt == 't' :
@@ -151,7 +151,7 @@ def set_reminder(event, lat, lng,qt, rt):
                 TextSendMessage(text='已為您設定 '+str(lat)+','+str(lng)+' 附近'+tt1+'的提醒')
             )
             nearp = get_close_position_key(qt, float(lat), float(lng))
-            db.child('user').child(str(event.source.sender_id)).child(qt).child(nearp).set(rt)
+            db.child('user').child(str(event.source.sender_id)).child(qt).child(nearp).child(str(rt)).set()
     else:
         line_bot_api.push_message(
             event.source.sender_id,
