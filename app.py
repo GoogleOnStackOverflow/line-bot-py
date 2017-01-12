@@ -213,7 +213,7 @@ ask_term = ['問','知道','想','請問','詢問','嗎','有','沒','沒有','?
 weather_term = ['天氣','空氣','品質','很糟','概況','情形','乾','濕','乾燥','潮濕',
     '情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷','不冷','冷不冷','熱不熱','不熱',
     '熱','冰','涼','雨','雪','霜','霧','霧霾','霾','霾害','空','空汙','污染']
-reminder_term = ['如果','要是','話','告訴','提醒','通知','時候']
+reminder_term = ['如果','要是','話','告訴','提醒','通知','時候','時']
 cancel_term = ['不要','取消','別','別再']
 def feature(words):
     t = 'unknown'
@@ -373,6 +373,23 @@ def weather_data_send_flow(event, words):
     else:
         send_cannot_understand(event)
 
+def send_user_all_remind(event):
+    users = db.child('user').get()
+    if users.has_key(event.source.user_id):
+        reminds = db.child('user').child(event.source.user_id).get()
+        t = ''
+        for remind in reminds.each():
+            t += str(remind.val()) + '\n'
+        line_bot_api.push_message(
+            event.source.sender_id,
+            TextSendMessage(text=t)
+        )
+    else:
+    line_bot_api.push_message(
+        event.source.sender_id,
+        TextSendMessage(text='您尚未設定任何提醒\n您可以告訴我：當...的時候提醒我，例如：\n如果台北市大安區空氣不好的話通知我' )
+    )
+
 @app.route('/callback', methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
@@ -411,8 +428,9 @@ def callback():
                 words = gen_to_arr(words)
                 
                 f = feature(words)
-
-                if f == 'usage':
+                if event.message.text == '我的提醒':
+                    send_user_all_remind(event)
+                elif f == 'usage':
                     line_bot_api.push_message(
                         event.source.sender_id,
                         TextSendMessage(text='如果想知道所在位置或特定區域天氣如何，請輸入：某地區（可以小範圍喔！）＋冷（天氣狀況）嗎？\n如果想要開啟通知，請輸入：如果、要是＋某地區＋天氣條件，告訴我！\n如果想要關閉提醒，請輸入：別、不要告訴我＋某地區＋天氣條件了！')
