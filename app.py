@@ -195,7 +195,7 @@ def map_img(addr, lat, lng):
     key = '&key=AIzaSyAC1c5MnGfa8VvNjQ9QTJxm7Qvg5wWBOvE'
     return (google_api_host + pic_format + marker + key)
 
-def geo_temp_parser(result):
+def geo_temp_parser(result, words):
     lat = result['geometry']['location']['lat']
     lng = result['geometry']['location']['lng']
     addr = result['formatted_address']
@@ -288,7 +288,7 @@ def location_checking_flow(event, words):
                         
             line_bot_api.push_message(
                 event.source.sender_id,
-                geo_temp_parser(results[0])
+                geo_temp_parser(results[0], words)
             )
         else:
             send_cannot_find_location(event)
