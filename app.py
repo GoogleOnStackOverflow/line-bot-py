@@ -375,7 +375,7 @@ def weather_data_send_flow(event, words):
 
 def send_user_all_remind(event):
     users = db.child('user').get()
-    if users.has_key(event.source.user_id):
+    if users.val().has_key(event.source.user_id):
         reminds = db.child('user').child(event.source.user_id).get()
         t = ''
         for remind in reminds.each():
