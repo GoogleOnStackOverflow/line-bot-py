@@ -136,7 +136,7 @@ def set_reminder(event, lat, lng,qt, rt):
         nearp = get_close_position_key('psi', lat, lng)
         db.child('user').child(str(event.source.sender_id)).child('psi').child(nearp).set(True)
     elif not qt == 'unknown':
-        if qt not == 'r':
+        if not qt == 'r':
             if qt == 't' :
                 tt1 = '溫度'
             else:
@@ -264,7 +264,7 @@ def geo_temp_parser(result, words):
         alt_text='地點確認：請使用手機版以取得最佳體驗',
         template=ButtonsTemplate(
             thumbnail_image_url = map_img(addr, lat, lng),
-            title = '這是你要找的地方嗎？',
+            title = '這是您要設定提醒的地點嗎？',
             text = str(lat) + ' , ' + str(lng),
             actions = [
                 PostbackTemplateAction(
