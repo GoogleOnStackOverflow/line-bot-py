@@ -414,9 +414,9 @@ def callback():
 
                 if f == 'usage':
                     line_bot_api.push_message(
-                    event.source.sender_id,
-                    TextSendMessage(text='如果想知道所在位置或特定區域天氣如何，請輸入：某地區（可以小範圍喔！）＋冷（天氣狀況）嗎？\n如果想要開啟通知，請輸入：如果、要是＋某地區＋天氣條件，告訴我！\n如果想要關閉提醒，請輸入：別、不要告訴我＋某地區＋天氣條件了！')
-                )
+                        event.source.sender_id,
+                        TextSendMessage(text='如果想知道所在位置或特定區域天氣如何，請輸入：某地區（可以小範圍喔！）＋冷（天氣狀況）嗎？\n如果想要開啟通知，請輸入：如果、要是＋某地區＋天氣條件，告訴我！\n如果想要關閉提醒，請輸入：別、不要告訴我＋某地區＋天氣條件了！')
+                    )
                 elif f == 'r':
                     location_checking_flow(event,words)
                 elif f == 'a':
@@ -430,6 +430,32 @@ def callback():
                 lat = event.message.latitude
                 lng = event.message.longitude
                 send_loc_data(lat, lng, 'unknown', event)
+
+    return 'OK'
+
+@app.route('/reminder/<reminding>', methods=['POST'])
+def reminder(reminding):
+    user_id = reminding.split('/')[0]
+    qtype = reminding.split('/')[1]
+    data_point = reminding.split('/')[2]
+
+    rest = db.child(qtype).child(data_point).get()
+    lat = (rest.val())['lat']
+    lng = (rest.val())['lng']
+    data_val = (rest.val())['value']
+    if qtype == 't':
+        tt1 = '溫度'
+    elif qtype == 'h':
+        tt1 = '濕度'
+    elif qtype == 'pm25':
+        tt1 = ' PM2.5 值'
+    elif qtype == 'psi':
+        tt1 = ' PSI 值'
+
+    line_bot_api.push_message(
+        user_id,
+        TextSendMessage(text='提醒您，目前 '+str(lat)+','+str(lng)+' 附近的'+tt1+'為 '+data_val)
+    )
 
     return 'OK'
 
