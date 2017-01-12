@@ -180,7 +180,7 @@ def get_all_reminder_type(event):
 not_geo_term = ['天氣','空氣','品質','月','日','年','週','很糟','概況','冷不冷','熱不熱','不冷','不熱','不'
     '情形','情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷','空污','空汙','嚴重','嚴','重',
     '熱','冰','涼','雨','雪','霜','霧','霧霾','霾','霾害','好','附近','空','汙','污','汙染','污染',
-    '的','時候','差','壞','糟','話','乾','濕','乾燥','潮濕','高','低','多','用法','會']
+    '的','時候','差','壞','糟','話','乾','濕','乾燥','潮濕','高','低','多','用法','會','時']
 
 em_flag = ['d','p','pa','pbei','c','cc','u','e','y','o','h','k','x','w','qt',
     'qv','r','rr','rz','rzt','rzv','ryt','ryv','rg','t','tg','v','vd','vn','vshi',
@@ -379,7 +379,7 @@ def send_user_all_remind(event):
         reminds = db.child('user').child(event.source.user_id).get()
         t = ''
         for remind in reminds.each():
-            t += str(remind.val()) + '\n'
+            t += str(reminds.key()) + '::' + str(remind.val()) + '\n'
         line_bot_api.push_message(
             event.source.sender_id,
             TextSendMessage(text=t)
