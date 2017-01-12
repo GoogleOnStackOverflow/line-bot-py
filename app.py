@@ -379,11 +379,29 @@ def send_user_all_remind(event):
         reminds = db.child('user').child(event.source.user_id).get()
         t = ''
         for remind in reminds.each():
-            t += str(reminds.key()) + '::' + str(remind.val()) + '\n'
-        line_bot_api.push_message(
-            event.source.sender_id,
-            TextSendMessage(text=t)
-        )
+            qt = remind['type']
+            if qt == 't' :
+                tt1 = '溫度'
+            elif qt == 'h':
+                tt1 = '濕度'
+            elif qt == 'pm25':
+                tt1 = 'PM 2.5值'
+            elif qt == 'psi':
+                tt1 = 'PSI值'
+            rt = remind['value']
+            if rt == 'True':
+                tt1 += '較高時'
+            else:
+                tt1 += '較低時'
+            line_bot_api.push_message(
+                event.source.sender_id,
+                LocationSendMessage(
+                    title='在以下地點'+tt1+'的提醒',
+                    address=str(remind['lat'])+','+str(remind['lng'])+'附近',
+                    latitude=float(remind['lat']),
+                    longitude=float(remind['lng'])
+                )
+            )
     else:
         line_bot_api.push_message(
             event.source.sender_id,
