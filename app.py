@@ -232,7 +232,7 @@ def try_match_geo_name(words):
     for word in words:
         if word['flag'] not in em_flag:
             if not is_n_keywords(word['word']):
-                t += word['word'] + ' '
+                t += word['word']
     return t
 
 # Codes for parsing feature type
