@@ -421,6 +421,8 @@ def callback():
                     location_checking_flow(event,words)
                 elif f == 'a':
                     weather_data_send_flow(event, words)
+                elif f == 'c':
+                    remove_all_reminder(event)
                 else:
                     send_cannot_understand(event)
 
