@@ -170,7 +170,7 @@ def get_all_reminder_type(event):
     to_return = []
     for reminder in all_reminder.each():
         to_return.append({
-            'type': reminder.key()
+            'type': reminder.key(),
             'data': reminder.val()
         })
     return to_return
