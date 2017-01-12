@@ -87,6 +87,16 @@ def get_close_position_data(datatype, lat, lng):
             now_dis = d
     return (r.val())['value']
 
+def get_close_position_key(datatype, lat, lng):
+    now_dis = 6367 * 6
+    all_data = db.child(datatype).get()
+    for data in all_data.each():
+        d = distance(lat, lng, (data.val())['lat'], (data.val())['lng'])
+        if now_dis > d:
+            r = data
+            now_dis = d
+    return r.key()
+
 # apixu data
 def get_chinese_condition_term(code):
     r = requests.get('http://www.apixu.com/doc/conditions.json')
@@ -114,6 +124,56 @@ def get_weather_condition(lat,lng):
         }
     else:
         return 'unknown'
+
+def set_reminder(event, lat, lng,qt, rt):
+    if qt == 'a':
+        line_bot_api.push_message(
+            event.source.sender_id,
+            TextSendMessage(text='已為您設定 '+str(lat)+','+str(lng)+' 附近的空氣品質提醒')
+        )
+        nearp = get_close_position_key('pm25', lat, lng)
+        db.child('user').child(str(event.source.sender_id)).child('pm25').child(nearp).set(True)
+        nearp = get_close_position_key('psi', lat, lng)
+        db.child('user').child(str(event.source.sender_id)).child('psi').child(nearp).set(True)
+    elif not qt == 'unknown':
+        if qt not == 'r':
+            if qt == 't' :
+                tt1 = '溫度'
+            else:
+                tt1 = '濕度'
+            if rt:
+                tt1 += '較高時'
+            else:
+                tt1 += '較低時'
+
+            line_bot_api.push_message(
+                event.source.sender_id,
+                TextSendMessage(text='已為您設定 '+str(lat)+','+str(lng)+' 附近'+tt1+'的提醒')
+            )
+            nearp = get_close_position_key(qt, lat, lng)
+            db.child('user').child(str(event.source.sender_id)).child(qt).child(nearp).set(rt)
+    else:
+        line_bot_api.push_message(
+            event.source.sender_id,
+            TextSendMessage(text='很抱歉，目前提醒功能僅限於提醒溫度、濕度、空氣品質，謝謝' )
+        )
+
+def remove_all_reminder(event):
+    db.child('user').child(event.source.sender_id).remove()
+    line_bot_api.push_message(
+        event.source.sender_id,
+        TextSendMessage(text='已為您取消所有提醒' )
+    )
+
+def get_all_reminder_type(event):
+    all_reminder = db.child('user').child(str(event.source.sender_id)).get()
+    to_return = []
+    for reminder in all_reminder.each():
+        to_return.append({
+            'type': reminder.key()
+            'data': reminder.val()
+        })
+    return to_return
 
 # Codes for NLP
 # Codes for parsing the geo 
@@ -334,11 +394,16 @@ def callback():
             lng = event.postback.data.split(',')[1]
             qt = event.postback.data.split(',')[2]
             rt = event.postback.data.split(',')[3]
+            if rt == 'True':
+                rt = True
+            else:
+                rt = False
 
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text=lat+' : '+lng+' : '+ qt + ' : ' + rt)
+                TextSendMessage(text='正在為您設定')
             )
+            set_reminder(event, lat, lng, qt, rt)
             
         elif isinstance(event, MessageEvent):
             if isinstance(event.message, TextMessage):
