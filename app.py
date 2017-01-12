@@ -385,10 +385,10 @@ def send_user_all_remind(event):
             TextSendMessage(text=t)
         )
     else:
-    line_bot_api.push_message(
-        event.source.sender_id,
-        TextSendMessage(text='您尚未設定任何提醒\n您可以告訴我：當...的時候提醒我，例如：\n如果台北市大安區空氣不好的話通知我' )
-    )
+        line_bot_api.push_message(
+            event.source.sender_id,
+            TextSendMessage(text='您尚未設定任何提醒\n您可以告訴我：當...的時候提醒我，例如：\n如果台北市大安區空氣不好的話通知我' )
+        )
 
 @app.route('/callback', methods=['POST'])
 def callback():
