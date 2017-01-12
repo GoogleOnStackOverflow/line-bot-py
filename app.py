@@ -151,7 +151,7 @@ def set_reminder(event, lat, lng,qt, rt):
                 TextSendMessage(text='已為您設定 '+str(lat)+','+str(lng)+' 附近'+tt1+'的提醒')
             )
             nearp = get_close_position_key(qt, float(lat), float(lng))
-            db.child('user').child(str(event.source.sender_id)).child(qt)update({nearp:str(rt)})
+            db.child('user').child(str(event.source.sender_id)).child(qt).update({nearp:str(rt)})
     else:
         line_bot_api.push_message(
             event.source.sender_id,
