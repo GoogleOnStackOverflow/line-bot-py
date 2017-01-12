@@ -74,5 +74,13 @@ def renew_db():
     renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-epa.json', 'EPA')
     renew_api_data('http://nrl.iis.sinica.edu.tw/LASS/last-all-airbox.json', 'AIRBOX')
 
+#def remind_trigger():
+#    all_reminding = db.child('user').get()
+#    for remind in all_reminding.each():
+#        r = remind.val()
+#        user_id = remind.key()
+#        if r.has_key('pm25')
+#            requests.post('https://gentle-shore-46956.herokuapp.com/reminder/'+user_id+'/'+'pm25'+'/'+r['pm25'])
+
 if __name__ == '__main__':
     renew_db()

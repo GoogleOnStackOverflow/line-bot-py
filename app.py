@@ -132,9 +132,9 @@ def set_reminder(event, lat, lng,qt, rt):
             TextSendMessage(text='已為您設定 '+str(lat)+','+str(lng)+' 附近的空氣品質提醒')
         )
         nearp = get_close_position_key('pm25', float(lat), float(lng))
-        db.child('user').child(str(event.source.sender_id)).child('pm25').child(nearp).child('True').set('')
+        db.child('user').child(str(event.source.sender_id)).child('pm25').update({nearp:'True'})
         nearp = get_close_position_key('psi', float(lat), float(lng))
-        db.child('user').child(str(event.source.sender_id)).child('psi').child(nearp).child('True').set('')
+        db.child('user').child(str(event.source.sender_id)).child('psi').update({nearp:'True'})
     elif not qt == 'unknown':
         if not qt == 'r':
             if qt == 't' :
@@ -151,7 +151,7 @@ def set_reminder(event, lat, lng,qt, rt):
                 TextSendMessage(text='已為您設定 '+str(lat)+','+str(lng)+' 附近'+tt1+'的提醒')
             )
             nearp = get_close_position_key(qt, float(lat), float(lng))
-            db.child('user').child(str(event.source.sender_id)).child(qt).child(nearp).child(str(rt)).set('')
+            db.child('user').child(str(event.source.sender_id)).child(qt)update({nearp:str(rt)})
     else:
         line_bot_api.push_message(
             event.source.sender_id,
@@ -210,11 +210,11 @@ def try_match_geo_name(words):
 
 # Codes for parsing feature type
 ask_term = ['問','知道','想','請問','詢問','嗎','有','沒','沒有','?','？','如何','怎樣']
-weather_term = ['天氣','空氣','品質','很糟','概況','情形','乾','濕','乾燥','潮濕'
-    '情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷',
+weather_term = ['天氣','空氣','品質','很糟','概況','情形','乾','濕','乾燥','潮濕',
+    '情況','可能性','機率','降雨','溫度','濕度','濃度','程度','冷','不冷','冷不冷','熱不熱','不熱',
     '熱','冰','涼','雨','雪','霜','霧','霧霾','霾','霾害','空','空汙','污染']
 reminder_term = ['如果','要是','話','告訴','提醒','通知','時候']
-cancel_term = ['不要','取消','不','別','別再']
+cancel_term = ['不要','取消','別','別再']
 def feature(words):
     t = 'unknown'
     for word in words:
