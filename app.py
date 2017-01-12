@@ -209,7 +209,7 @@ def geo_temp_parser(result):
             actions = [
                 PostbackTemplateAction(
                     label = '是',
-                    data = str(lat) + ',' + str(lng)
+                    data = str(lat) + ',' + str(lng) + ',' +str(q_type(words)) + ',' + str(r_type(words))
                 )
             ]
         )
@@ -233,7 +233,7 @@ def send_loc_data(lat, lng, event, u_event):
             )
         else:
             t = cond['con'] + '\n'
-            t += '現在氣溫:'+ str(get_close_position_data('t',lat, lng))+'\n濕度：'+ str(get_close_position_data('h',lat, lng))
+            t += '氣溫:'+ str(get_close_position_data('t',lat, lng))+'\n濕度：'+ str(get_close_position_data('h',lat, lng))
             line_bot_api.push_message(
                 u_event.source.sender_id,
                 TextSendMessage(text=t)
@@ -332,10 +332,12 @@ def callback():
         if isinstance(event , PostbackEvent):
             lat = event.postback.data.split(',')[0]
             lng = event.postback.data.split(',')[1]
+            qt = event.postback.data.split(',')[2]
+            rt = event.postback.data.split(',')[3]
 
             line_bot_api.reply_message(
                 event.reply_token,
-                loc_data_parser(lat,lng)
+                TextSendMessage(text=lat+' : '+lng+' : '+ qt + ' : ' + rt)
             )
             
         elif isinstance(event, MessageEvent):
