@@ -97,6 +97,33 @@ def get_close_position_key(datatype, lat, lng):
             now_dis = d
     return r.key()
 
+def hum_string(h):
+    if h <= 40:
+        return '小心灰塵、細菌等容易附著在黏膜上，刺激喉部，引發咳嗽，也會誘發支氣管炎、哮喘等呼吸系統疾病哦！'
+    elif h <= 70:
+        return '很好的濕度條件！只要保持室內外通風就可以享受美好的時光啦！'
+    else:
+        return '濕度有點過高了！快打開除溼機讓室內變得舒服，小心在潮濕發黴的環境中，會增加患哮喘和濕疹等過敏性疾病的風險唷。'
+
+def temp_string(t):
+    if t <= 10:
+        return '寒流來襲，天氣寒冷，出門要穿厚衣服加個厚外套哦！小心不要感冒了！'
+    elif t <= 20:
+        return '稍有涼意，建議外出加件外套，才不會感冒了唷。'
+    elif t <= 30:
+        return '溫暖的天氣，可以出外走走，和朋友們一起踏青。'
+    else:
+        return '炎熱的天氣，記得外出擦個防曬，戴個墨鏡，戴個帽子，多喝水，以免中暑囉！'
+def pm_string(t):
+    if t <= 35:
+        return '空氣好好喔！可以正常戶外活動！'
+    elif t <= 53:
+        return '空氣有一點點的灰！有心臟、呼吸道及心血管疾病的成人與孩童感受到徵狀時，應考慮減少體力消耗，特別是減少戶外活動哦。'
+    elif t <= 70:
+        return '空氣品質不太好，出門可以帶個口罩喔！如果有不適，如眼痛，咳嗽或喉嚨痛等，應該考慮減少戶外活動。'
+    else:
+        return '天呀！空氣太不好了！盡量待在室內，如果有不適要減少戶外活動。有氣喘的人可能需增加使用吸入劑頻率。出門記得做好防護措施哦！'
+
 # apixu data
 def get_chinese_condition_term(code):
     r = requests.get('http://www.apixu.com/doc/conditions.json')
@@ -292,26 +319,33 @@ def send_loc_data(lat, lng, event, u_event):
                 TextSendMessage(text='很抱歉，我找不到該地點的天氣資訊' )
             )
         else:
+            pm = get_close_position_data('pm25',lat, lng)
             t = cond['con'] + '\n'
             t += '氣溫:'+ str(get_close_position_data('t',lat, lng))+'\n濕度：'+ str(get_close_position_data('h',lat, lng))
+            t += '空氣品質資料：\nPM 2.5 值為 ' + str(pm) + '\nPSI 值則為 ' + str(get_close_position_data('psi',lat, lng))
+            t += '\n' + pm_string(float(pm))
+            
             line_bot_api.push_message(
                 u_event.source.sender_id,
                 TextSendMessage(text=t)
             )
     elif event == 't':
+        val = get_close_position_data('t',lat, lng)
         line_bot_api.push_message(
             u_event.source.sender_id,
-            TextSendMessage(text='目前溫度大約是%s度' % str(get_close_position_data('t',lat, lng)))
+            TextSendMessage(text='目前溫度大約是'+str(val)+'度\n' + temp_string(float(val)))
         )
     elif event == 'h':
+        val = get_close_position_data('h',lat, lng)
         line_bot_api.push_message(
             u_event.source.sender_id,
-            TextSendMessage(text='目前濕度大約是' + str(get_close_position_data('h',lat, lng)) + '%')
+            TextSendMessage(text='目前濕度大約是' + str(val) + '%\n' + hum_string(float(val)))
         )
     elif event == 'a':
+        pm = get_close_position_data('pm25',lat, lng)
         line_bot_api.push_message(
             u_event.source.sender_id,
-            TextSendMessage(text='目前 PM 2.5 值大約是 ' + str(get_close_position_data('pm25',lat, lng)) + '\nPSI 值則為 ' + str(get_close_position_data('psi',lat, lng)))
+            TextSendMessage(text='目前 PM 2.5 值大約是 ' + str(pm) + '\nPSI 值則為 ' + str(get_close_position_data('psi',lat, lng)) +'\n'+ pm_string(float(pm)))
         )
     else:
         send_cannot_understand(u_event)
