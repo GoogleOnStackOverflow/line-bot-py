@@ -459,7 +459,7 @@ def callback():
                 elif f == 'usage':
                     line_bot_api.push_message(
                         event.source.sender_id,
-                        TextSendMessage(text='如果想知道所在位置或特定區域天氣如何，請輸入：某地區（可以小範圍喔！）＋冷（天氣狀況）嗎？\n如果想要開啟通知，請輸入：如果、要是＋某地區＋天氣條件，告訴我！\n如果想要關閉提醒，請輸入：別、不要告訴我＋某地區＋天氣條件了！')
+                        TextSendMessage(text='如果想知道所在位置或特定區域天氣如何，您可以問我：某地區（可以小範圍喔！）＋冷（天氣狀況）嗎？\n如果想要開啟通知，您可以告訴我：如果、要是＋某地區＋天氣條件 的時候告訴我！\n想要看有些已設定的通知，請告訴我「我的通知」\n如果想要關閉提醒，您可以告訴我：取消提醒')
                     )
                 elif f == 'r':
                     location_checking_flow(event,words)
