@@ -377,7 +377,10 @@ def send_user_all_remind(event):
     users = db.child('user').get()
     if users.val().has_key(event.source.user_id):
         reminds = db.child('user').child(event.source.user_id).get()
-        t = ''
+        line_bot_api.push_message(
+            event.source.sender_id,
+            TextSendMessage(text='您所設定的提醒如下' )
+        )
         for remind in reminds.each():
             remind = remind.val()
             qt = remind['type']
@@ -398,11 +401,15 @@ def send_user_all_remind(event):
                 event.source.sender_id,
                 LocationSendMessage(
                     title='在以下地點'+tt1+'的提醒',
-                    address=str(remind['lat'])+','+str(remind['lng'])+'附近',
+                    address=str(round(float(remind['lat']),6))+','+str(round(float(remind['lng']),6))+'\n附近',
                     latitude=float(remind['lat']),
                     longitude=float(remind['lng'])
                 )
             )
+        line_bot_api.push_message(
+            event.source.sender_id,
+            TextSendMessage(text='您可以告訴我取消、不要提醒，我就會幫您取消所有提醒囉')
+        )
     else:
         line_bot_api.push_message(
             event.source.sender_id,
