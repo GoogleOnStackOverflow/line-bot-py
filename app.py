@@ -400,7 +400,7 @@ def send_user_all_remind(event):
             line_bot_api.push_message(
                 event.source.sender_id,
                 LocationSendMessage(
-                    title='在以下地點\n'+tt1+'的提醒',
+                    title=tt1+'的提醒',
                     address=str(round(float(remind['lat']),6))+','+str(round(float(remind['lng']),6))+'\n附近',
                     latitude=float(remind['lat']),
                     longitude=float(remind['lng'])
